@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 from utils.simple_logger import Log
-log = Log(__name__)
+log = Log.get_logger(__name__)
 
 # docs_root = "/home/missa/dev/"
 # global_kwargs = "**/*.md"

@@ -7,7 +7,7 @@ from doc_search_llm.directory_processor import DirectoryProcessor
 from doc_search_llm.vectorstore_processor import VectorstoreProcessor
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 from utils.simple_logger import Log
-log = Log(__name__)
+log = Log.get_logger(__name__)
 
 def main(args):
     directory_processor = DirectoryProcessor(docs_root=args.docs_root, global_kwargs=args.global_kwargs)
