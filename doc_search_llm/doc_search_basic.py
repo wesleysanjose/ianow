@@ -61,10 +61,10 @@ llm = HuggingFacePipeline(pipeline=pipe)
 
 chain = load_qa_chain(llm, chain_type="stuff")
 
-query = "how to use stable vicuna?"
+query = "what's langchain?"
 docs = vectorstore.similarity_search(query, 3, include_metadata=True)
 
 log.info(len(docs))
 log.info(docs[0])
 
-chain.run(input_documents=docs, question=query)
+print(chain.run(input_documents=docs, question=query))
