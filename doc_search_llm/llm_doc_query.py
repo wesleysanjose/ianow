@@ -24,10 +24,24 @@ def main(args):
     if args.query is not None:
         # search the query through similarit search against documents
         query = args.query
-        results = vectorstore_processor.vectorstore.similarity_search(query)
+        # search the query through LLM
 
-        if results is not None:
-            log.info(f'best matched docs: {results[0]}')
+        # load the LLM model
+        tokenizer = AutoTokenizer.from_pretrained(args.modle_name_or_path)
+        model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path, device_map='auto', load_in_8bit=True)
+        pipe = pipeline("text-generation", model=model, tokenizer=tokenizer, max_new_tokens=2048)
+        llm = HuggingFacePipeline(pipeline=pipe)
+
+        # load the QA chain
+        chain = load_qa_chain(llm, chain_type="stuff")
+
+        # search the best matched documents
+        docs = vectorstore_processor.vectorstore.similarity_search(query, 10, include_metadata=True)
+
+        # run the LLM query by feeding the best matched documents
+        result = chain.run(input_documents=docs, question=query)
+        log.info(f'LLM query: {query}')
+        log.info(f'LLM result: {result}')
 
 if __name__ == "__main__":
 
