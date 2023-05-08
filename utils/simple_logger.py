@@ -53,6 +53,8 @@ class Log:
 
             # Get the logging level from the config file
             log_level_str = config.get("logging", {}).get("level", "INFO")
+            print(f'log_level_str: {log_level_str}')
             log_level = getattr(logging, log_level_str.upper(), logging.INFO)
+            print(f'log_level: {log_level}')
 
             return Log(name, level)
