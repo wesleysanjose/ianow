@@ -1,5 +1,6 @@
 import logging
 import yaml
+from pathlib import Path
 
 class Log:
     def __init__(self, name, level=logging.INFO):
@@ -43,8 +44,11 @@ class Log:
         if name in logging.Logger.manager.loggerDict:
             return logging.getLogger(name)
         else:
+            # Assuming the logging_config.yaml is located in the same directory as the simple_logger.py file
+            config_file_path = Path(__file__).parent / "logging_config.yaml"
+
             # Read the config file
-            with open("logging_config.yaml", "r") as yaml_file:
+            with open(config_file_path, "r") as yaml_file:
                 config = yaml.safe_load(yaml_file)
 
             # Get the logging level from the config file
