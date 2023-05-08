@@ -1,3 +1,4 @@
+import traceback
 from langchain.vectorstores import Chroma
 
 
@@ -22,7 +23,9 @@ class VectorstoreProcessor:
             log.info(f'Vectorstore created with {len(self.vectorstore)} vectors')
         except Exception as e:
             log.error(f'Error creating vectorstore: {e}')
+            traceback.print_exc()
             self.vectorstore = None
+            raise e
 
     def load_from_disk(self):
         log.debug(f'Loading vectorstore from {self.persist_directory}')
