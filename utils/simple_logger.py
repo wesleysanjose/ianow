@@ -42,6 +42,7 @@ class Log:
     def get_logger(name, level=logging.INFO):
         # Check if the logger with the given name exists
         if name in logging.Logger.manager.loggerDict:
+            print(logging.Logger.manager.loggerDict)
             return logging.getLogger(name)
         else:
             # Assuming the logging_config.yaml is located in the same directory as the simple_logger.py file
@@ -57,4 +58,4 @@ class Log:
             log_level = getattr(logging, log_level_str.upper(), logging.INFO)
             print(f'log_level: {log_level}')
 
-            return Log(name, log_level)
+            return Log(name, level=log_level)
