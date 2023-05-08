@@ -1,6 +1,6 @@
 import traceback
 from langchain.vectorstores import Chroma
-
+from langchain.embeddings import SentenceTransformerEmbeddings, HuggingFaceEmbeddings
 
 import sys
 from pathlib import Path
@@ -9,10 +9,13 @@ from utils.simple_logger import Log
 log = Log.get_logger(__name__)
 
 class VectorstoreProcessor:
-    def __init__(self, embeddings, persist_directory='chroma_storage'):
+    def __init__(self, embeddings=None, persist_directory='chroma_storage'):
         log.debug(f'Initializing vectorstore processor with {embeddings}')
         log.debug(f'Persisting vectorstore to {persist_directory}')
-        self.embeddings = embeddings
+        if embeddings is not None:
+            self.embeddings = embeddings
+        else:
+            self.embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
         self.vectorstore = None
         self.persist_directory = persist_directory
 
