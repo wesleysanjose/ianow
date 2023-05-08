@@ -13,8 +13,8 @@ def main(args):
     directory_processor = DirectoryProcessor(docs_root=args.docs_root, global_kwargs=args.global_kwargs)
     docs = directory_processor.load(chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
 
-    embeddings = HuggingFaceEmbeddings(model_name=args.modle_name_or_path)
-    vectorstore_processor = VectorstoreProcessor(embeddings)
+    # embeddings = HuggingFaceEmbeddings(model_name=args.modle_name_or_path)
+    vectorstore_processor = VectorstoreProcessor()
     vectorstore_processor.convert_from_docs(docs)
 
     if args.query is not None:
