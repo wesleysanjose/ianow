@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     # process command line arguments
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--modle_name_or_path', type=str, help='model name or path')
+    parser.add_argument('--modle_name_or_path', type=str, default="all-MiniLM-L6-v2", help='model name or path (default: all-MiniLM-L6-v2)')
     parser.add_argument('--chunk_size', type=int, default=1000, help='chunk size (default: 1000)')
     parser.add_argument('--chunk_overlap', type=int, default=0, help='chunk overlap (default: 0)')
     parser.add_argument('--docs_root', type=str, required=True, help='docs root directory')
