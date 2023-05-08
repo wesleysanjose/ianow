@@ -38,9 +38,10 @@ class Log:
         self.logger.critical(message)
 
     @staticmethod
-    def get_logger(self, name, level=logging.INFO):
-        if self.logger is not None:
-            return self.logger
+    def get_logger(name, level=logging.INFO):
+        # Check if the logger with the given name exists
+        if name in logging.Logger.manager.loggerDict:
+            return logging.getLogger(name)
         else:
             # Read the config file
             with open("logging_config.yaml", "r") as yaml_file:
