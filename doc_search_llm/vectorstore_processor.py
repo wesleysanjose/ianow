@@ -11,7 +11,7 @@ log = Log.get_logger(__name__)
 
 class VectorstoreProcessor:
     def __init__(self, embeddings_object=None, persist_directory='chroma_storage'):
-        log.debug(f'Initializing vectorstore processor with {embeddings}')
+        log.debug(f'Initializing vectorstore processor with {embeddings_object}')
         log.debug(f'Persisting vectorstore to {persist_directory}')
         if embeddings_object is None:
             embeddings_object = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
