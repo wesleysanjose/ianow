@@ -37,3 +37,11 @@ class VectorstoreProcessor:
         log.debug(f'Saving vectorstore to {self.persist_directory}')
         if self.vectorstore is not Null:
             self.vectorstore.persist()
+
+    def similarity_search(self, query):
+        log.debug(f'Performing similarity search for {query}')
+        if self.vectorstore is not Null:
+            return self.vectorstore.similarity_search(query)
+        else:
+            log.error(f'Vectorstore is null')
+            return Null

@@ -1,8 +1,7 @@
 from langchain.document_loaders import DirectoryLoader
-from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings
+from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 from langchain.chains.question_answering import load_qa_chain
-import torch
 
 import sys
 from pathlib import Path
@@ -29,7 +28,6 @@ log.info(f'Now you have {len(split_docs)} documents')
 
 # from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
-import os
 
 
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")

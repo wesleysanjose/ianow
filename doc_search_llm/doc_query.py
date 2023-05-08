@@ -3,10 +3,10 @@ import argparse
 
 import sys
 from pathlib import Path
-from doc_search_llm.directory_processor import DirectoryProcessor
-from doc_search_llm.vectorstore_processor import VectorstoreProcessor
+from .directory_processor import DirectoryProcessor
+from .vectorstore_processor import VectorstoreProcessor
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
-from utils.simple_logger import Log
+from ..utils.simple_logger import Log
 log = Log(__name__)
 
 def main(args):
