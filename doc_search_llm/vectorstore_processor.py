@@ -12,7 +12,7 @@ class VectorstoreProcessor:
         log.debug(f'Initializing vectorstore processor with {embeddings}')
         log.debug(f'Persisting vectorstore to {persist_directory}')
         self.embeddings = embeddings
-        self.vectorstore = Null
+        self.vectorstore = None
         self.persist_directory = persist_directory
 
     def convert_from_docs(self, docs):
@@ -22,7 +22,7 @@ class VectorstoreProcessor:
             log.info(f'Vectorstore created with {len(self.vectorstore)} vectors')
         except Exception as e:
             log.error(f'Error creating vectorstore: {e}')
-            self.vectorstore = Null
+            self.vectorstore = None
 
     def load_from_disk(self):
         log.debug(f'Loading vectorstore from {self.persist_directory}')
@@ -31,17 +31,17 @@ class VectorstoreProcessor:
             log.info(f'Vectorstore loaded with {len(self.vectorstore)} vectors')
         except Exception as e:
             log.error(f'Error loading vectorstore: {e}')
-            self.vectorstore = Null
+            self.vectorstore = None
 
     def save(self):
         log.debug(f'Saving vectorstore to {self.persist_directory}')
-        if self.vectorstore is not Null:
+        if self.vectorstore is not None:
             self.vectorstore.persist()
 
     def similarity_search(self, query):
         log.debug(f'Performing similarity search for {query}')
-        if self.vectorstore is not Null:
+        if self.vectorstore is not None:
             return self.vectorstore.similarity_search(query)
         else:
             log.error(f'Vectorstore is null')
-            return Null
+            return None
