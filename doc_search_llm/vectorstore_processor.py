@@ -14,7 +14,7 @@ class VectorstoreProcessor:
         log.debug(f'Initializing vectorstore processor with {embeddings_object}')
         log.debug(f'Persisting vectorstore to {persist_directory}')
         if embeddings_object is None:
-            embeddings_object = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
+            self.embeddings_object = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
         else:
             self.embeddings_object = embeddings_object
         self.vectorstore = None
