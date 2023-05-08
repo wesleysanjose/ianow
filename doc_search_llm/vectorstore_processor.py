@@ -20,7 +20,6 @@ class VectorstoreProcessor:
         log.debug(f'Converting {len(docs)} documents to vectorstore')
         try:
             self.vectorstore = Chroma.from_documents(docs, self.embeddings, persist_directory=self.persist_directory)
-            log.info(f'Vectorstore created with {len(self.vectorstore)} vectors')
         except Exception as e:
             log.error(f'Error creating vectorstore: {e}')
             traceback.print_exc()
