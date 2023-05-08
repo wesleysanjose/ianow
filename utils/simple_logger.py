@@ -57,4 +57,4 @@ class Log:
             log_level = getattr(logging, log_level_str.upper(), logging.INFO)
             print(f'log_level: {log_level}')
 
-            return Log(name, level)
+            return Log(name, log_level)
