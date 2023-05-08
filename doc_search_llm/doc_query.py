@@ -1,4 +1,4 @@
-from langchain.embeddings import SentenceTransformerEmbeddings
+from langchain.embeddings import SentenceTransformerEmbeddings, HuggingFaceEmbeddings
 import argparse
 
 import sys
@@ -13,7 +13,7 @@ def main(args):
     directory_processor = DirectoryProcessor(docs_root=args.docs_root, global_kwargs=args.global_kwargs)
     docs = directory_processor.load(chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
 
-    embeddings = SentenceTransformerEmbeddings(model_name=args.modle_name_or_path)
+    embeddings = HuggingFaceEmbeddings(model_name=args.modle_name_or_path)
     vectorstore_processor = VectorstoreProcessor(embeddings)
     vectorstore_processor.convert_from_docs(docs)
 
@@ -21,9 +21,10 @@ def main(args):
         query = args.query
         results = vectorstore_processor.similarity_search(query)
 
-    log.info(f'matched docs: {len(results)}')
-    for i, result in enumerate(results):
-      log.info(f'matched doc {i}: {result}')
+    if results is not None:
+        log.info(f'matched docs: {len(results)}')
+        for i, result in enumerate(results):
+            log.info(f'matched doc {i}: {result}')
 
 if __name__ == "__main__":
 
