@@ -33,7 +33,7 @@ def main(args):
 
         # search the query through LLM
         tokenizer = AutoTokenizer.from_pretrained(args.modle_name_or_path)
-        model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path, map_location="gpu", load_in_8bit=True)
+        model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path, device_map='auto', load_in_8bit=True)
         pipe = pipeline("text-generation", model=model, tokenizer=tokenizer, max_new_tokens=2048)
         llm = HuggingFacePipeline(pipeline=pipe)
         chain = load_qa_chain(llm, chain_type="stuff")
