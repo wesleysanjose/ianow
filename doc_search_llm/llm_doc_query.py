@@ -30,15 +30,6 @@ def main(args):
         query = args.query
         # search the query through LLM
 
-        # load the LLM model
-        if torch.has_mps:
-            log.info("Using MPS")
-            device = torch.device('mps')
-            model = model.to(device)
-        else:
-            log.info("Using CUDA")
-            model = model.cuda()
-            
         if args.load_in_8bit:
             log.info("Model Loading in 8 bits")
             model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path,
@@ -53,6 +44,15 @@ def main(args):
                                                          low_cpu_mem_usage=True,
                                                          torch_dtype=torch.bfloat16 if args.bf16 else torch.float16,
                                                          trust_remote_code=True)
+            # load the LLM model
+            if torch.has_mps:
+                log.info("Using MPS")
+                device = torch.device('mps')
+                model = model.to(device)
+            else:
+                log.info("Using CUDA")
+                device = "cuda:0" if torch.cuda.is_available() else "cpu"
+                model = model.to(device)
 
         if type(model) is LlamaForCausalLM:
             tokenizer = LlamaTokenizer.from_pretrained(
