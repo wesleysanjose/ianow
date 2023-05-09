@@ -40,16 +40,16 @@ def main(args):
                                                      device_map="auto",
                                                      quantization_config = BitsAndBytesConfig(load_in_8bit=True, llm_int8_enable_fp32_cpu_offload=True),
                                                      trust_remote_code=True)
-            if torch.has_mps:
-                device = torch.device('mps')
-                model = model.to(device)
-            else:
-                model = model.cuda()
         else:
             model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path, 
                                                      low_cpu_mem_usage=True,
                                                      torch_dtype=torch.bfloat16 if args.bf16 else torch.float16, 
                                                      trust_remote_code=True)
+            if torch.has_mps:
+                device = torch.device('mps')
+                model = model.to(device)
+            else:
+                model = model.cuda()
         if type(model) is LlamaForCausalLM:
             tokenizer = LlamaTokenizer.from_pretrained(args.modle_name_or_path, clean_up_tokenization_spaces=True)
         else:
