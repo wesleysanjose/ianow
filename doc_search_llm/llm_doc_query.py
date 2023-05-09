@@ -33,7 +33,6 @@ def main(args):
         if args.load_in_8bit:
             log.info("Model Loading in 8 bits")
             model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path,
-                                                         low_cpu_mem_usage=True,
                                                          device_map="auto",
                                                          quantization_config=BitsAndBytesConfig(
                                                              load_in_8bit=True, llm_int8_enable_fp32_cpu_offload=True),
@@ -41,18 +40,9 @@ def main(args):
         else:
             log.info("Default model loading")
             model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path,
-                                                         low_cpu_mem_usage=True,
+                                                         device_map="auto",
                                                          torch_dtype=torch.bfloat16 if args.bf16 else torch.float16,
                                                          trust_remote_code=True)
-            # load the LLM model
-            if torch.has_mps:
-                log.info("Using MPS")
-                device = torch.device('mps')
-                model = model.to(device)
-            else:
-                log.info("Using CUDA")
-                device = "cuda:0" if torch.cuda.is_available() else "cpu"
-                model = model.to(device)
 
         if type(model) is LlamaForCausalLM:
             tokenizer = LlamaTokenizer.from_pretrained(
