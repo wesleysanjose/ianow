@@ -1,6 +1,6 @@
 from langchain.embeddings import SentenceTransformerEmbeddings, HuggingFaceEmbeddings
 from langchain.chains.question_answering import load_qa_chain
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline, LlamaTokenizer, LlamaForCausalLM
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 
 import argparse
@@ -27,8 +27,13 @@ def main(args):
         # search the query through LLM
 
         # load the LLM model
-        tokenizer = AutoTokenizer.from_pretrained(args.modle_name_or_path)
-        model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path, device_map='auto', load_in_8bit=True)
+
+        if args.llama:
+            tokenizer = LlamaTokenizer.from_pretrained(args.modle_name_or_path)
+            model = LlamaForCausalLM.from_pretrained(args.modle_name_or_path, device_map='auto', load_in_8bit=True if args.load_in_8bit else None)
+        else:
+            tokenizer = AutoTokenizer.from_pretrained(args.modle_name_or_path)
+            model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path, device_map='auto', load_in_8bit=True if args.load_in_8bit else None)
         pipe = pipeline("text-generation", model=model, tokenizer=tokenizer, max_new_tokens=2048)
         llm = HuggingFacePipeline(pipeline=pipe)
 
@@ -54,6 +59,8 @@ if __name__ == "__main__":
     parser.add_argument('--global_kwargs', type=str, default="**/*.txt", help='global kwargs (default: **/*.txt')
     parser.add_argument('--persist_directory', type=str, default="chroma_storage", help='persist directory (default: chroma_storage')
     parser.add_argument('--query', type=str, required=True, help='query string, used to query against the docs')
+    parser.add_argument('--llama', action='store_true', help='Enable the flag')
+    parser.add_argument('--load_in_8bit', action='store_true', help='Load in 8 bits')
     args = parser.parse_args()
     log.info(f'args: {args}')
 
