@@ -60,6 +60,7 @@ def main(args):
         # search the best matched documents
         docs = vectorstore_processor.vectorstore.similarity_search(
             query, 10, include_metadata=True)
+        log.info(f'similarity searched {len(docs)} documents')
 
         # run the LLM query by feeding the best matched documents
         result = chain.run(input_documents=docs, question=query)
