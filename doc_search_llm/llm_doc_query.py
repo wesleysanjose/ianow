@@ -15,8 +15,6 @@ sys.path.append(str(Path(__file__).parent.parent.absolute()))
 log = Log.get_logger(__name__)
 
 
-
-
 def main(args):
     directory_processor = DirectoryProcessor(
         docs_root=args.docs_root, global_kwargs=args.global_kwargs)
@@ -33,27 +31,35 @@ def main(args):
         # search the query through LLM
 
         # load the LLM model
-
+        if torch.has_mps:
+            log.info("Using MPS")
+            device = torch.device('mps')
+            model = model.to(device)
+        else:
+            log.info("Using CUDA")
+            model = model.cuda()
+            
         if args.load_in_8bit:
-            model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path, 
-                                                     low_cpu_mem_usage = True,
-                                                     device_map="auto",
-                                                     quantization_config = BitsAndBytesConfig(load_in_8bit=True, llm_int8_enable_fp32_cpu_offload=True),
-                                                     trust_remote_code=True)
+            log.info("Model Loading in 8 bits")
+            model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path,
+                                                         low_cpu_mem_usage=True,
+                                                         device_map="auto",
+                                                         quantization_config=BitsAndBytesConfig(
+                                                             load_in_8bit=True, llm_int8_enable_fp32_cpu_offload=True),
+                                                         trust_remote_code=True)
         else:
-            model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path, 
-                                                     low_cpu_mem_usage=True,
-                                                     torch_dtype=torch.bfloat16 if args.bf16 else torch.float16, 
-                                                     trust_remote_code=True)
-            if torch.has_mps:
-                device = torch.device('mps')
-                model = model.to(device)
-            else:
-                model = model.cuda()
+            log.info("Default model loading")
+            model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path,
+                                                         low_cpu_mem_usage=True,
+                                                         torch_dtype=torch.bfloat16 if args.bf16 else torch.float16,
+                                                         trust_remote_code=True)
+
         if type(model) is LlamaForCausalLM:
-            tokenizer = LlamaTokenizer.from_pretrained(args.modle_name_or_path, clean_up_tokenization_spaces=True)
+            tokenizer = LlamaTokenizer.from_pretrained(
+                args.modle_name_or_path, clean_up_tokenization_spaces=True)
         else:
-            tokenizer = AutoTokenizer.from_pretrained(args.modle_name_or_path, clean_up_tokenization_spaces=True)
+            tokenizer = AutoTokenizer.from_pretrained(
+                args.modle_name_or_path, clean_up_tokenization_spaces=True)
         pipe = pipeline("text-generation", model=model,
                         tokenizer=tokenizer, max_new_tokens=1024)
         llm = HuggingFacePipeline(pipeline=pipe)
