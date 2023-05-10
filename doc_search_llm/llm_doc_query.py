@@ -17,21 +17,25 @@ log = Log.get_logger(__name__)
 
 
 def main(args):
+
+    # load the documents from the docs directory
     directory_processor = DirectoryProcessor(
         docs_root=args.docs_root, global_kwargs=args.global_kwargs)
     docs = directory_processor.load(
         chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
 
-    # embeddings = HuggingFaceEmbeddings(model_name=args.modle_name_or_path)
+    # convert the documents to vectorstore
     vectorstore_processor = VectorstoreProcessor()
     vectorstore_processor.convert_from_docs(docs)
 
     if args.query is not None:
-        # search the query through similarit search against documents
+        # get the query string
         query = args.query
 
+        # load the LLM model
         model, tokenizer = ModelProcessor.load_model(args)
 
+        # create the LLM pipeline
         pipe = pipeline("text-generation", model=model,
                         tokenizer=tokenizer, max_new_tokens=1024)
         llm = HuggingFacePipeline(pipeline=pipe)
@@ -39,7 +43,7 @@ def main(args):
         # load the QA chain
         chain = load_qa_chain(llm, chain_type="stuff")
 
-        # search the best matched documents
+        # search top N best matched documents to reduce the scope
         docs = vectorstore_processor.vectorstore.similarity_search(
             query, args.doc_count_for_qa, include_metadata=True)
         log.info(f'similarity searched {len(docs)} documents')
