@@ -21,6 +21,7 @@ log = Log.get_logger(__name__)
 chain = None
 docs = None
 
+
 async def websocket_handler(request):
     log.info("New connection")
     ws = web.WebSocketResponse()
@@ -43,10 +44,12 @@ async def websocket_handler(request):
             else:
                 await ws.send_str("No answer found in the knowledge base")
         elif msg.type == aiohttp.WSMsgType.ERROR:
-            log.error('WebSocket connection closed with exception %s' % ws.exception())
+            log.error('WebSocket connection closed with exception %s' %
+                      ws.exception())
 
     log.info('WebSocket connection closed')
     return ws
+
 
 async def websocket_handler(request):
     ws = web.WebSocketResponse()
