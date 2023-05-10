@@ -26,6 +26,7 @@ class DirectoryProcessor:
         loader = DirectoryLoader(self.docs_root, self.global_kwargs)
         self.docs = loader.load()
         log.info(f'You have loaded {len(self.docs)} document(s)')
+        log.debug(f'List of loaded documents: {self.docs}')
         log.debug(f'The first document contains {len(self.docs[0].page_content)} characters')
 
         if chunk_size > 0:
