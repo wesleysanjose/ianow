@@ -27,6 +27,15 @@ async def websocket_handler(request):
         if msg.type == aiohttp.WSMsgType.TEXT:
             query = msg.data
             log.debug(f"Received query: {query}")
+
+            if query is None or len(query) == 0:
+                await ws.send_str("No query provided")
+                continue
+
+            if len(query) < 10:
+                await ws.send_str("Query too short")
+                continue
+            
             vectorstore_processor = request.app['vectorstore_processor']
             docs = vectorstore_processor.vectorstore.similarity_search(query)
             if docs is not None:
