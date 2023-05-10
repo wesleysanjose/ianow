@@ -1,9 +1,8 @@
+from doc_search_llm.model_processor import ModelProcessor
 from utils.simple_logger import Log
-from langchain.embeddings import SentenceTransformerEmbeddings, HuggingFaceEmbeddings
 from langchain.chains.question_answering import load_qa_chain
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline, LlamaTokenizer, LlamaForCausalLM, BitsAndBytesConfig
+from transformers import pipeline
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
-import torch
 
 import argparse
 
@@ -28,28 +27,9 @@ def main(args):
     if args.query is not None:
         # search the query through similarit search against documents
         query = args.query
-        # search the query through LLM
 
-        if args.load_in_8bit:
-            log.info("Model Loading in 8 bits")
-            model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path,
-                                                         device_map="auto",
-                                                         quantization_config=BitsAndBytesConfig(
-                                                             load_in_8bit=True, llm_int8_enable_fp32_cpu_offload=True),
-                                                         trust_remote_code=True)
-        else:
-            log.info("Default model loading")
-            model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path,
-                                                         device_map="auto",
-                                                         torch_dtype=torch.bfloat16 if args.bf16 else torch.float16,
-                                                         trust_remote_code=True)
+        model, tokenizer = ModelProcessor.load_model(args)
 
-        if type(model) is LlamaForCausalLM:
-            tokenizer = LlamaTokenizer.from_pretrained(
-                args.modle_name_or_path, clean_up_tokenization_spaces=True)
-        else:
-            tokenizer = AutoTokenizer.from_pretrained(
-                args.modle_name_or_path, clean_up_tokenization_spaces=True)
         pipe = pipeline("text-generation", model=model,
                         tokenizer=tokenizer, max_new_tokens=1024)
         llm = HuggingFacePipeline(pipeline=pipe)
@@ -66,7 +46,8 @@ def main(args):
         result = chain.run(input_documents=docs, question=query)
         log.info(f'LLM query: {query}')
         log.info(f'LLM result: {result}')
-
+    else:
+        log.error(f'no query string provided, please provide a query string by using --query')
 
 if __name__ == "__main__":
 
@@ -77,7 +58,7 @@ if __name__ == "__main__":
     parser.add_argument('--chunk_size', type=int, default=1000,
                         help='chunk size (default: 1000)')
     parser.add_argument('--chunk_overlap', type=int,
-                        default=0, help='chunk overlap (default: 0)')
+                        default=100, help='chunk overlap (default: 100)')
     parser.add_argument('--docs_root', type=str,
                         required=True, help='docs root directory')
     parser.add_argument('--global_kwargs', type=str,
