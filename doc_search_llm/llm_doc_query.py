@@ -1,4 +1,7 @@
-from doc_search_llm.model_processor import ModelProcessor
+from doc_search_llm.processors.model_processor import ModelProcessor
+from doc_search_llm.processors.directory_processor import DirectoryProcessor
+from doc_search_llm.processors.vectorstore_processor import VectorstoreProcessor
+
 from utils.simple_logger import Log
 from langchain.chains.question_answering import load_qa_chain
 from transformers import pipeline
@@ -8,8 +11,7 @@ import argparse
 
 import sys
 from pathlib import Path
-from doc_search_llm.directory_processor import DirectoryProcessor
-from doc_search_llm.vectorstore_processor import VectorstoreProcessor
+
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 log = Log.get_logger(__name__)
 
