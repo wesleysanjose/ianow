@@ -59,7 +59,7 @@ def main(args):
 
         # search the best matched documents
         docs = vectorstore_processor.vectorstore.similarity_search(
-            query, 10, include_metadata=True)
+            query, args.doc_count_for_qa, include_metadata=True)
         log.info(f'similarity searched {len(docs)} documents')
 
         # run the LLM query by feeding the best matched documents
@@ -90,6 +90,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--load_in_8bit', action='store_true', help='Load in 8 bits')
     parser.add_argument('--bf16', action='store_true', help='Use bf16')
+    parser.add_argument('--doc_count_for_qa', type=int, default=4,  help='doc count for QA')
     args = parser.parse_args()
     log.info(f'args: {args}')
 
