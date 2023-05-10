@@ -17,7 +17,7 @@ class ModelProcessor:
     @staticmethod
     def load_model(args):
         log.debug(f'Loading model from {args}')
-        if args is not None and len(args) > 0 and args.modle_name_or_path is not None:
+        if args is not None and len(vars(args)) > 0 and args.modle_name_or_path is not None:
             # load the model from the path
             try:
                 if args.load_in_8bit:
