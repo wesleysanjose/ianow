@@ -27,6 +27,7 @@ async def websocket_handler(request):
 
     async for msg in ws:
         if msg.type == aiohttp.WSMsgType.TEXT:
+            log.info(f'query: {msg.data}')
             await ws.send_str(chain.run(input_documents=docs, question=msg.data))
         elif msg.type == aiohttp.WSMsgType.ERROR:
             print('WebSocket connection closed with exception %s' %
