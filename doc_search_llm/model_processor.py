@@ -17,7 +17,7 @@ class ModelProcessor:
     @staticmethod
     def load_model(args):
         log.debug(f'Loading model from {args}')
-        if len(args) > 0 and args.modle_name_or_path is not None:
+        if args is not None and len(args) > 0 and args.modle_name_or_path is not None:
             # load the model from the path
             try:
                 if args.load_in_8bit:
@@ -47,4 +47,7 @@ class ModelProcessor:
                 log.error(f'Exception: {e}')
                 log.error(traceback.format_exc())
                 sys.exit(1)
+        else:
+            log.error(f'No model name path provided')
+            sys.exit(1)
         return model, tokenizer
