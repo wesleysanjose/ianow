@@ -18,10 +18,6 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 log = Log.get_logger(__name__)
 
-chain = None
-docs = None
-
-
 async def websocket_handler(request):
     log.info("New connection")
     ws = web.WebSocketResponse()
@@ -49,29 +45,6 @@ async def websocket_handler(request):
 
     log.info('WebSocket connection closed')
     return ws
-
-
-async def websocket_handler(request):
-    ws = web.WebSocketResponse()
-    await ws.prepare(request)
-
-    async for msg in ws:
-        if msg.type == aiohttp.WSMsgType.TEXT:
-            log.info(f'query: {msg.data}')
-            chain = request.app['chain']
-            result = chain.run(input_documents=docs, question=query)
-
-            await ws.send_str(chain.run(input_documents=docs, question=msg.data))
-        elif msg.type == aiohttp.WSMsgType.ERROR:
-            print('WebSocket connection closed with exception %s' %
-                  ws.exception())
-
-    print('WebSocket connection closed')
-    return ws
-
-app = web.Application()
-app.router.add_get('/ws', websocket_handler)
-
 
 async def on_startup(app):
     args = app['args']
