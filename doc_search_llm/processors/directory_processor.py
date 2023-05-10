@@ -26,8 +26,10 @@ class DirectoryProcessor:
         loader = DirectoryLoader(self.docs_root, self.global_kwargs)
         self.docs = loader.load()
         log.info(f'You have loaded {len(self.docs)} document(s)')
-        log.debug(f'List of loaded documents: {self.docs}')
-        log.debug(f'The first document contains {len(self.docs[0].page_content)} characters')
+        #print the first 80 characters of the all documents
+        for i, doc in enumerate(self.docs):
+            log.debug(f'The first 80 characters of the document {i}: {doc.page_content[:80]}')
+            log.debug(f'The document {i} contains {len(doc.page_content)} characters')
 
         if chunk_size > 0:
             text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
