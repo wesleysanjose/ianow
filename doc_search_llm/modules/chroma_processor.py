@@ -15,6 +15,8 @@ class ChromaProcessor:
         # if embeddings is not provided, it will use the default Chroma embeddings
         if embeddings is not None:
             self.embeddings = embeddings
+        else:
+            self.embeddings = None
 
         self.vectorstore = None
         self.persist_directory = persist_directory
@@ -22,7 +24,7 @@ class ChromaProcessor:
     def convert_from_docs(self, docs):
         log.debug(f'Converting {len(docs)} documents to vectorstore')
         try:
-            self.vectorstore = Chroma.from_documents(docs, self.embeddings if self.embeddings is not None else None, persist_directory=self.persist_directory)
+            self.vectorstore = Chroma.from_documents(docs, self.embeddings, persist_directory=self.persist_directory)
         except Exception as e:
             log.error(f'Error creating vectorstore: {e}')
             traceback.print_exc()
