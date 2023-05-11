@@ -10,6 +10,7 @@ from langchain.chains.question_answering import load_qa_chain
 from transformers import pipeline
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 from langchain.docstore.document import Document
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
@@ -54,15 +55,14 @@ def load_args():
 
     return args
 
-
-def load_docs(args):
-    directory_processor = DirectoryProcessor(
-        docs_root=args.docs_root, global_kwargs=args.global_kwargs)
-    docs = directory_processor.load(
-        chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
-
-    vectorstore_processor.convert_from_docs(docs)
-    return vectorstore_processor
+def vectorstore_from_docs(vectorstore_processor, docs):
+    chunk_size = args.chunk_size
+    chunk_overlap = args.chunk_overlap
+    if chunk_size > 0:
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+            splitted_docs = text_splitter.split_documents(docs)
+            log.info(f'Your original documents have been splitted into {len(splitted_docs)} documents')
+    vectorstore_processor.convert_from_docs(splitted_docs)
 
 def query_to_llm(vectorstore_processor, chain, query):
     docs = vectorstore_processor.vectorstore.similarity_search(query)
@@ -71,6 +71,7 @@ def query_to_llm(vectorstore_processor, chain, query):
         log.debug(f'Best matched docs: {docs[0]}')
 
         answer = chain.run(input_documents=docs, question=query)
+        log.debug(f'answer: {answer}')
     return answer
 
 
@@ -92,8 +93,9 @@ if __name__ == "__main__":
             with open(file.name, encoding="utf-8") as f:
                 content = f.read()
                 doc = Document(page_content=content, page_title=file.name, page_url=file.name, page_id=file.name)
+                log.debug(f'converted doc from upload file: {doc}')
                 docs = [doc]
-                vectorstore_processor.convert_from_docs(docs)
+                vectorstore_from_docs(vectorstore_processor, docs)
                 return content
 
         gr.Interface(fn=process_file, inputs="file", outputs="text")
