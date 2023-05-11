@@ -65,7 +65,6 @@ def load_docs(args):
     return vectorstore_processor
 
 def query_to_llm(vectorstore_processor, chain, query):
-    results = vectorstore_processor.vectorstore.similarity_search(query)
     docs = vectorstore_processor.vectorstore.similarity_search(query)
     if docs is not None:
         log.info(f'best matched docs count: {len(docs)}')
