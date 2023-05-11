@@ -93,7 +93,8 @@ if __name__ == "__main__":
             with open(file.name, encoding="utf-8") as f:
                 content = f.read()
                 doc = Document(page_content=content, page_title=file.name, page_url=file.name, page_id=file.name)
-                vectorstore_processor.convert_from_docs(doc)
+                docs = [doc]
+                vectorstore_processor.convert_from_docs(docs)
                 return content
 
         gr.Interface(fn=process_file, inputs="file", outputs="text")
