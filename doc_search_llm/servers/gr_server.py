@@ -5,4 +5,4 @@ def process_file(file):
 
 iface = gr.Interface(fn=process_file, inputs="file", outputs="text")
 
-iface.launch()
+iface.launch(share=True)  # share=True will generate a link for you to share with others))
