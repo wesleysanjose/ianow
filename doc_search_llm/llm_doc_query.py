@@ -1,6 +1,6 @@
-from doc_search_llm.processors.model_processor import ModelProcessor
-from doc_search_llm.processors.directory_processor import DirectoryProcessor
-from doc_search_llm.processors.vectorstore_processor import VectorstoreProcessor
+from doc_search_llm.modules.model_processor import ModelProcessor
+from doc_search_llm.modules.directory_processor import DirectoryProcessor
+from doc_search_llm.modules.chroma_processor import VectorstoreProcessor
 
 from utils.simple_logger import Log
 from langchain.chains.question_answering import load_qa_chain

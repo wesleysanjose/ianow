@@ -7,8 +7,8 @@ import argparse
 
 import sys
 from pathlib import Path
-from doc_search_llm.directory_processor import DirectoryProcessor
-from doc_search_llm.vectorstore_processor import VectorstoreProcessor
+from doc_search_llm.modules.directory_processor import DirectoryProcessor
+from doc_search_llm.modules.chroma_processor import VectorstoreProcessor
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 from utils.simple_logger import Log
 log = Log.get_logger(__name__)
