@@ -8,7 +8,7 @@ import argparse
 import sys
 from pathlib import Path
 from doc_search_llm.modules.directory_processor import DirectoryProcessor
-from doc_search_llm.modules.chroma_processor import VectorstoreProcessor
+from doc_search_llm.modules.chroma_processor import ChromaProcessor
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 from utils.simple_logger import Log
 log = Log.get_logger(__name__)
@@ -18,7 +18,7 @@ def main(args):
     docs = directory_processor.load(chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
 
     #embeddings = HuggingFaceEmbeddings(model_name=args.modle_name_or_path)
-    vectorstore_processor = VectorstoreProcessor()
+    vectorstore_processor = ChromaProcessor()
     vectorstore_processor.convert_from_docs(docs)
 
     if args.query is not None:

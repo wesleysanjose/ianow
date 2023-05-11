@@ -1,7 +1,7 @@
 import gradio as gr
 
 def process_file(file):
-    return f"File name: {file.name}, File type: {file.type}"
+    return f"File name: {file.name}"
 
 iface = gr.Interface(fn=process_file, inputs="file", outputs="text")
 
