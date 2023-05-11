@@ -19,6 +19,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 log = Log.get_logger(__name__)
 
+
 async def websocket_handler(request):
     log.debug("New connection")
     ws = web.WebSocketResponse()
@@ -36,7 +37,7 @@ async def websocket_handler(request):
             if len(query) < 10:
                 await ws.send_str("Query too short")
                 continue
-            
+
             vectorstore_processor = request.app['vectorstore_processor']
             docs = vectorstore_processor.vectorstore.similarity_search(query)
             if docs is not None:
@@ -55,6 +56,7 @@ async def websocket_handler(request):
 
     log.info('WebSocket connection closed')
     return ws
+
 
 async def on_startup(app):
     args = app['args']
@@ -77,7 +79,7 @@ async def on_startup(app):
     llm = HuggingFacePipeline(pipeline=pipe)
     # load the QA chain
     chain = load_qa_chain(llm, chain_type="stuff")
-    app['chain'] = chain    
+    app['chain'] = chain
 
 if __name__ == "__main__":
 
