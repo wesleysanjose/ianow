@@ -9,6 +9,8 @@ from doc_search_llm.modules.model_processor import ModelProcessor
 from langchain.chains.question_answering import load_qa_chain
 from transformers import pipeline
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
+from langchain.docstore.document import Document
+
 
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 log = Log.get_logger(__name__)
@@ -90,7 +92,8 @@ if __name__ == "__main__":
         def process_file(file):
             with open(file.name, encoding="utf-8") as f:
                 content = f.read()
-                vectorstore_processor.convert_from_docs(content)
+                doc = Document(page_content=content, page_title=file.name, page_url=file.name, page_id=file.name)
+                vectorstore_processor.convert_from_docs(doc)
                 return content
 
         gr.Interface(fn=process_file, inputs="file", outputs="text")
