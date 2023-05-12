@@ -1,6 +1,6 @@
 from doc_search_llm.modules.model_processor import ModelProcessor
 from doc_search_llm.modules.directory_processor import DirectoryProcessor
-from doc_search_llm.modules.chroma_processor import VectorstoreProcessor
+from doc_search_llm.modules.chroma_processor import ChromaProcessor
 
 from utils.simple_logger import Log
 from langchain.chains.question_answering import load_qa_chain
@@ -44,7 +44,7 @@ def main(args):
         chain = load_qa_chain(llm, chain_type="stuff")
 
         # search top N best matched documents to reduce the scope
-        docs = vectorstore_processor.vectorstore.similarity_search(
+        docs = ChromaProcessor.vectorstore.similarity_search(
             query, args.doc_count_for_qa, include_metadata=True)
         log.info(f'similarity searched {len(docs)} documents')
 
