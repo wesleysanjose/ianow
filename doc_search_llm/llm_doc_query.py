@@ -26,7 +26,7 @@ def main(args):
 
     # convert the documents to vectorstore
     chroma_processor = ChromaProcessor()
-    ChromaProcessor.convert_from_docs(docs)
+    chroma_processor.convert_from_docs(docs)
 
     if args.query is not None:
         # get the query string
