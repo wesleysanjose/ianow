@@ -118,8 +118,6 @@ if __name__ == "__main__":
                         default="**/*.txt", help='global kwargs (default: **/*.txt')
     parser.add_argument('--persist_directory', type=str, default="chroma_storage",
                         help='persist directory (default: chroma_storage')
-    parser.add_argument('--query', type=str, required=True,
-                        help='query string, used to query against the docs')
     parser.add_argument(
         '--load_in_8bit', action='store_true', help='Load in 8 bits')
     parser.add_argument('--bf16', action='store_true', help='Use bf16')
