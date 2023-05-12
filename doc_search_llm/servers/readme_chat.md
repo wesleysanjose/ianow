@@ -37,5 +37,6 @@ python -m doc_search_llm.servers.gr_server --model_name_or_path model_path
 After the Gradio interface has launched, you can interact with it in your web browser (http://<CHAT_SERVER>:7860):
 
 1. Upload a document file.
-
+![image](https://user-images.githubusercontent.com/28772823/238087007-dfd166c2-ca13-4254-9b2e-3349784d6513.jpg)
 2. Use the chat interface to send query to the bot. The bot will respond with the answer based on the knowledge from the uploaded documents.
+![image](https://user-images.githubusercontent.com/28772823/238087003-6818390c-e367-43e3-9353-f1e52edb2016.jpg)
