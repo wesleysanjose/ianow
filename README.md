@@ -3,7 +3,7 @@
 This script allows you to perform document search using a Language Model (LLM). It involves loading documents from a directory, converting them into a vectorstore, and using an LLM model to answer queries (as arg passed through the application) based on these documents.
 
 Please make sure you have GPU available because the code is not ready for CPU.
-The test was done against viccuna-13b-v1.1 model and result looks good. The model by default is loaded as fp16/bf16 if specified, or even 8bits through the specificied argument.
+The test was done against vicuna-13b-v1.1 model and result looks good. The model by default is loaded as fp16/bf16 if specified, or even 8bits through the specificied argument.
 
 ## gradio chat code
 - upload a document from UI and bot will answer the query based on the knowledge in the document
@@ -25,7 +25,7 @@ pip install -r requirements.txt
 
 ## How to use
 
-You can use the LLM model in local by providing a sys path or download the model from HF by using model name. The code is tested with viccuna-13b-v1.1.
+You can use the LLM model in local by providing a sys path or download the model from HF by using model name. The code is tested with vicuna-13b-v1.1.
 
 ```bash
 git clone https://github.com/wesleysanjose/ianow
