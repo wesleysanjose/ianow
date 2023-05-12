@@ -53,6 +53,7 @@ def load_args():
                         default=4,  help='to avoid LLM too many documents, we only feed top N best matched documents to LLM')
     parser.add_argument('--port', type=int, default=7860, help='port number to listen on')
     parser.add_argument('--server_name', type=str, default='0.0.0.0', help='server name to listen on')
+    parser.add_argument('--trust_remote_code', action='store_true', help='Trust remote code')
 
     args = parser.parse_args()
     log.info(f'args: {args}')

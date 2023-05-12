@@ -96,6 +96,7 @@ if __name__ == "__main__":
                         help='Use bf16 to load the model if device supports it, otherwise use fp16')
     parser.add_argument('--top_n_docs_feed_llm', type=int,
                         default=4,  help='to avoid LLM too many documents, we only feed top N best matched documents to LLM')
+    parser.add_argument('--trust_remote_code', action='store_true', help='Trust remote code')
     args = parser.parse_args()
 
     main(args)

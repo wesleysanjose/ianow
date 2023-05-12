@@ -1,4 +1,3 @@
-import traceback
 from langchain.vectorstores import Chroma
 
 import sys
@@ -12,12 +11,10 @@ class ChromaProcessor:
         log.debug(f'Initializing vectorstore processor with {embeddings}')
         log.debug(f'Persisting vectorstore to {persist_directory}')
 
-        # if embeddings is not provided, it will use the default Chroma embeddings
-        if embeddings is not None:
-            self.embeddings = embeddings
-        else:
-            self.embeddings = None
-
+        if persist_directory and not os.path.isdir(persist_directory):
+            raise ValueError('Invalid directory path provided')
+        
+        self.embeddings = None
         self.vectorstore = None
         self.persist_directory = persist_directory
 
@@ -25,9 +22,12 @@ class ChromaProcessor:
         log.debug(f'Converting {len(docs)} documents to vectorstore')
         try:
             self.vectorstore = Chroma.from_documents(docs, self.embeddings, persist_directory=self.persist_directory)
+        except FileNotFoundError as fnf_error:
+            log.error(f'Error creating vectorstore: {fnf_error}')
+            self.vectorstore = None
+            raise fnf_error
         except Exception as e:
-            log.error(f'Error creating vectorstore: {e}')
-            traceback.print_exc()
+            log.error(f'Unexpected error occurred while creating vectorstore: {e}')
             self.vectorstore = None
             raise e
 
@@ -36,11 +36,23 @@ class ChromaProcessor:
         try:
             self.vectorstore = Chroma(persist_directory=self.persist_directory, embedding_function=self.embeddings)
             log.info(f'Vectorstore loaded with {len(self.vectorstore)} vectors')
-        except Exception as e:
-            log.error(f'Error loading vectorstore: {e}')
+        except FileNotFoundError as fnf_error:
+            log.error(f'Error loading vectorstore: {fnf_error}')
             self.vectorstore = None
+            raise fnf_error
+        except Exception as e:
+            log.error(f'Unexpected error occurred while loading vectorstore: {e}')
+            self.vectorstore = None
+            raise e
 
     def save(self):
         log.debug(f'Saving vectorstore to {self.persist_directory}')
-        if self.vectorstore is not None:
-            self.vectorstore.persist()
+        if self.vectorstore:
+            try:
+                self.vectorstore.persist()
+            except Exception as e:
+                log.error(f'Unexpected error occurred while saving vectorstore: {e}')
+                raise e
+        else:
+            log.error('No vectorstore to save. Please ensure the vectorstore is loaded or created before saving.')
+            raise Exception('No vectorstore to save')
