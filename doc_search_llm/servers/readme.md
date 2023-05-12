@@ -1,4 +1,4 @@
-# Document Search with LLM and WebSocket
+# Query/Answer with local documents and local LLM via WebSocket streaming
 
 This script provides a WebSocket server that uses a Language Model (LLM) for document searching. It allows clients to send search queries over WebSocket, and the server will respond answer based on the documents provided in docs_root.
 
