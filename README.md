@@ -1,4 +1,4 @@
-# Document Search with LLM
+# Query/Answer using local documents and local LLM (Langchain integration)
 
 This script allows you to perform document search using a Language Model (LLM). It involves loading documents from a directory, converting them into a vectorstore, and using an LLM model to answer queries based on these documents.
 
