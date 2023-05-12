@@ -34,7 +34,7 @@ To run the Gradio interface, execute the script and provide the necessary comman
 python -m doc_search_llm.servers.gr_server --model_name_or_path model_path
 ```
 
-After the Gradio interface has launched, you can interact with it in your web browser:
+After the Gradio interface has launched, you can interact with it in your web browser (http://<CHAT_SERVER>:7860):
 
 1. Upload a document file.
 
