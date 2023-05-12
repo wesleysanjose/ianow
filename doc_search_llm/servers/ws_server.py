@@ -45,7 +45,7 @@ async def websocket_handler(request):
                 continue
 
             vectorstore_processor = request.app['vectorstore_processor']
-            docs = vectorstore_processor.vectorstore.similarity_search(query)
+            docs = vectorstore_processor.vectorstore.similarity_search(query, args.top_n_docs_feed_llm)
             if docs is not None:
                 log.info(f'best matched docs count: {len(docs)}')
                 log.debug(f'Best matched docs: {docs[0]}')
@@ -123,8 +123,8 @@ if __name__ == "__main__":
     parser.add_argument(
         '--load_in_8bit', action='store_true', help='Load in 8 bits')
     parser.add_argument('--bf16', action='store_true', help='Use bf16')
-    parser.add_argument('--doc_count_for_qa', type=int,
-                        default=4,  help='doc count for QA')
+    parser.add_argument('--top_n_docs_feed_llm', type=int,
+                        default=4,  help='to avoid LLM too many documents, we only feed top N best matched documents to LLM')
     parser.add_argument('--port', type=int, default=5000, help='port number')
     parser.add_argument('--trust_remote_code', action='store_true', help='Trust remote code')
 
