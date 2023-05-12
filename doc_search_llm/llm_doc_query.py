@@ -17,43 +17,59 @@ log = Log.get_logger(__name__)
 
 
 def main(args):
+    log.debug(f'args: {args}')
 
     # load the documents from the docs directory
     directory_processor = DirectoryProcessor(
         docs_root=args.docs_root, global_kwargs=args.global_kwargs)
-    docs = directory_processor.load(
-        chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
+
+    try:
+        docs = directory_processor.load(
+            chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
+    except Exception as e:
+        log.error(f'Error loading documents: {e}')
+        raise e
 
     # convert the documents to vectorstore
     chroma_processor = ChromaProcessor()
-    chroma_processor.convert_from_docs(docs)
+    try:
+        chroma_processor.convert_from_docs(docs)
+    except Exception as e:
+        log.error(f'Error converting documents to vectorstore: {e}')
+        raise e
 
     if args.query is not None:
         # get the query string
         query = args.query
 
         # load the LLM model
-        model, tokenizer = ModelProcessor.load_model(args)
+        try:
+            model, tokenizer = ModelProcessor.load_model(args)
 
-        # create the LLM pipeline
-        pipe = pipeline("text-generation", model=model,
-                        tokenizer=tokenizer, max_new_tokens=1024)
-        llm = HuggingFacePipeline(pipeline=pipe)
+            # create the LLM pipeline
+            pipe = pipeline("text-generation", model=model,
+                            tokenizer=tokenizer, max_new_tokens=1024)
+            llm = HuggingFacePipeline(pipeline=pipe)
 
-        # load the QA chain
-        chain = load_qa_chain(llm, chain_type="stuff")
+            # load the QA chain
+            chain = load_qa_chain(llm, chain_type="stuff")
+        except Exception as e:
+            log.error(f'Error loading model: {e}')
+            raise e
 
         # search top N best matched documents to reduce the scope
         docs = chroma_processor.vectorstore.similarity_search(
-            query, args.doc_count_for_qa, include_metadata=True)
-        log.info(f'similarity searched {len(docs)} documents')
+            query, args.top_n_docs_feed_llm, include_metadata=True)
+        log.info(f'similarity found {len(docs)} documents can be feed to LLM')
 
         # run the LLM query by feeding the best matched documents
         result = chain.run(input_documents=docs, question=query)
         log.info(f'LLM query: {query}')
         log.info(f'LLM result: {result}')
     else:
-        log.error(f'no query string provided, please provide a query string by using --query')
+        log.error(
+            f'no query string provided, please provide a query string by using --query')
+
 
 if __name__ == "__main__":
 
@@ -69,16 +85,14 @@ if __name__ == "__main__":
                         required=True, help='docs root directory')
     parser.add_argument('--global_kwargs', type=str,
                         default="**/*.txt", help='global kwargs (default: **/*.txt')
-    parser.add_argument('--persist_directory', type=str, default="chroma_storage",
-                        help='persist directory (default: chroma_storage')
     parser.add_argument('--query', type=str, required=True,
-                        help='query string, used to query against the docs')
-    parser.add_argument('--llama', action='store_true', help='Enable the flag')
+                        help='query string, used to query against LLM with the context of loaded documents')
     parser.add_argument(
-        '--load_in_8bit', action='store_true', help='Load in 8 bits')
-    parser.add_argument('--bf16', action='store_true', help='Use bf16')
-    parser.add_argument('--doc_count_for_qa', type=int, default=4,  help='doc count for QA')
+        '--load_in_8bit', action='store_true', help='Use 8 bits to load the model')
+    parser.add_argument('--bf16', action='store_true',
+                        help='Use bf16 to load the model if device supports it, otherwise use fp16')
+    parser.add_argument('--top_n_docs_feed_llm', type=int,
+                        default=4,  help='to avoid LLM too many documents, we only feed top N best matched documents to LLM')
     args = parser.parse_args()
-    log.info(f'args: {args}')
 
     main(args)
