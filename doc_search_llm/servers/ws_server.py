@@ -1,3 +1,4 @@
+import os
 from doc_search_llm.modules.model_processor import ModelProcessor
 from doc_search_llm.modules.directory_processor import DirectoryProcessor
 from doc_search_llm.modules.chroma_processor import ChromaProcessor
@@ -19,6 +20,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 log = Log.get_logger(__name__)
 
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 async def websocket_handler(request):
     log.debug(f"New connection from client ip: {request.remote}")
@@ -36,6 +38,10 @@ async def websocket_handler(request):
 
             if len(query) < 10:
                 await ws.send_str("Query too short")
+                continue
+
+            if len(query) > 1024:
+                await ws.send_str("Query too long")
                 continue
 
             vectorstore_processor = request.app['vectorstore_processor']
