@@ -1,8 +1,15 @@
 # Query/Answer using local documents and local LLM (Langchain integration)
 
-This script allows you to perform document search using a Language Model (LLM). It involves loading documents from a directory, converting them into a vectorstore, and using an LLM model to answer queries based on these documents.
+This script allows you to perform document search using a Language Model (LLM). It involves loading documents from a directory, converting them into a vectorstore, and using an LLM model to answer queries (as arg passed through the application) based on these documents.
 
 Please make sure you have GPU available because the code is not ready for CPU.
+The test was done against viccuna-13b-v1.1 model and result looks good. The model by default is loaded as fp16/bf16 if specified, or even 8bits through the specificied argument.
+
+## gradio chat code - upload a document from UI and bot will answer the query based on the knowledge in the document
+https://github.com/wesleysanjose/ianow/blob/main/doc_search_llm/servers/readme_chat.md
+
+## websocket streaming chat code - server pre-loads documents from specified directory, can answer the query from client through streaming
+https://github.com/wesleysanjose/ianow/blob/main/doc_search_llm/servers/readme.md
 
 ## conda env
 conda env is recommended, the code is tested against python 3.9, pytorch 1.17 and cuda 11.7 on a Nvidia RTX 3090.
