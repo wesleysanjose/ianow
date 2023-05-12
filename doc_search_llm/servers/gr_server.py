@@ -19,6 +19,7 @@ log = Log.get_logger(__name__)
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
+vectorstore_processor = ChromaProcessor()
 
 def load_model(args):
 
@@ -98,8 +99,6 @@ if __name__ == "__main__":
     args = load_args()
 
     chain = load_model(args)
-
-    vectorstore_processor = ChromaProcessor()
 
     # show the file content in the text box
     # show the chatbot response in the text box
