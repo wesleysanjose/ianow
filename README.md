@@ -61,6 +61,6 @@ The script does the following:
 
 ## Thanks
 inspired by
-https://github.com/hwchase17/langchain
-https://github.com/oobabooga/text-generation-webui
-https://github.com/LianjiaTech/BELLE
+- https://github.com/hwchase17/langchain
+- https://github.com/oobabooga/text-generation-webui
+- https://github.com/LianjiaTech/BELLE
