@@ -139,7 +139,7 @@ if __name__ == "__main__":
 
     try:
         demo.launch(server_name=args.server_name if args.server_name is not None else '0.0.0.0',
-                    port=args.port if args.port is not None else 5000)
+                    server_port=args.port if args.port is not None else 5000)
     except Exception as e:
         log.error(f'Error launching the demo: {e}')
         log.error(f'server_name: {args.server_name}')
