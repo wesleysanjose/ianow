@@ -21,7 +21,7 @@ log = Log.get_logger(__name__)
 
 
 async def websocket_handler(request):
-    log.debug("New connection")
+    log.debug(f"New connection from client ip: {request.remote}")
     ws = web.WebSocketResponse()
     await ws.prepare(request)
 
@@ -46,6 +46,7 @@ async def websocket_handler(request):
 
                 chain = request.app['chain']
                 answer = chain.run(input_documents=docs, question=query)
+                log.debug(f'Answer: {answer}')
 
                 await ws.send_str(str(answer))
             else:
@@ -53,6 +54,8 @@ async def websocket_handler(request):
         elif msg.type == aiohttp.WSMsgType.ERROR:
             log.error('WebSocket connection closed with exception %s' %
                       ws.exception())
+            await ws.close()
+            break
 
     log.info('WebSocket connection closed')
     return ws
@@ -63,23 +66,35 @@ async def on_startup(app):
 
     directory_processor = DirectoryProcessor(
         docs_root=args.docs_root, global_kwargs=args.global_kwargs)
-    docs = directory_processor.load(
-        chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
+    try:
+        docs = directory_processor.load(
+            chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
+    except Exception as e:
+        log.error(f'Error loading documents: {e}')
+        raise e
 
     vectorstore_processor = ChromaProcessor()
-    vectorstore_processor.convert_from_docs(docs)
-    app['vectorstore_processor'] = vectorstore_processor
+    try:
+        vectorstore_processor.convert_from_docs(docs)
+        app['vectorstore_processor'] = vectorstore_processor
 
-    # load the LLM model
-    model, tokenizer = ModelProcessor.load_model(args)
+        # load the LLM model
+        model, tokenizer = ModelProcessor.load_model(args)
 
-    # create the LLM pipeline
-    pipe = pipeline("text-generation", model=model,
-                    tokenizer=tokenizer, max_new_tokens=1024)
-    llm = HuggingFacePipeline(pipeline=pipe)
-    # load the QA chain
-    chain = load_qa_chain(llm, chain_type="stuff")
+        # create the LLM pipeline
+        pipe = pipeline("text-generation", model=model,
+                        tokenizer=tokenizer, max_new_tokens=1024)
+        llm = HuggingFacePipeline(pipeline=pipe)
+        # load the QA chain
+        chain = load_qa_chain(llm, chain_type="stuff")
+    except Exception as e:
+        log.error(f'Error loading model: {e}')
+        raise e
     app['chain'] = chain
+
+
+async def on_cleanup(app):
+    log.info('Cleaning up resources before shutdown')
 
 if __name__ == "__main__":
 
@@ -107,11 +122,12 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=int, default=5000, help='port number')
 
     args = parser.parse_args()
-    log.info(f'args: {args}')
+    log.deubg(f'args: {args}')
 
     # Create app and register on_startup function and route
     app = web.Application()
     app.on_startup.append(on_startup)
+    app.on_cleanup.append(on_cleanup)
     app.router.add_get('/ws', websocket_handler)
 
     # Store args in the app object
