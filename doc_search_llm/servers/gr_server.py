@@ -52,7 +52,7 @@ def load_args():
     parser.add_argument('--bf16', action='store_true', help='Use bf16')
     parser.add_argument('--top_n_docs_feed_llm', type=int,
                         default=4,  help='to avoid LLM too many documents, we only feed top N best matched documents to LLM')
-    parser.add_argument('--port', type=int, default=5000, help='port number to listen on')
+    parser.add_argument('--port', type=int, default=7860, help='port number to listen on')
     parser.add_argument('--server_name', type=str, default='0.0.0.0', help='server name to listen on')
 
     args = parser.parse_args()
