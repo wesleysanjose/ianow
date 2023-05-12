@@ -12,6 +12,9 @@ import argparse
 import sys
 from pathlib import Path
 
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 log = Log.get_logger(__name__)
 
