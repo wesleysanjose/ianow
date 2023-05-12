@@ -18,7 +18,8 @@ https://github.com/wesleysanjose/ianow/blob/main/doc_search_llm/servers/readme_c
 - server pre-loads documents from specified directory, can answer the query from client through streaming
 https://github.com/wesleysanjose/ianow/blob/main/doc_search_llm/servers/readme.md
 
-## conda env
+## python appliction code
+### conda env
 conda env is recommended, the code is tested against python 3.9, pytorch 1.17 and cuda 11.7 on a Nvidia RTX 3090.
 ```bash
 conda create -n ianow
@@ -28,7 +29,7 @@ conda activate ianow
 pip install -r requirements.txt
 ```
 
-## How to use
+### How to use
 
 You can use the LLM model in local by providing a sys path or download the model from HF by using model name. The code is tested with vicuna-13b-v1.1.
 
@@ -38,7 +39,7 @@ cd ianow
 python -m doc_search_llm.llm_doc_query --modle_name_or_path=<model_name_or_path> --docs_root=<docs_root> --query=<query>
 ```
 
-### Parameters:
+#### Parameters:
 
 - `--modle_name_or_path`: This is the model name or path for the LLM query. This is a required argument.
 - `--chunk_size`: This is the chunk size and the default value is 1000.
@@ -51,7 +52,7 @@ python -m doc_search_llm.llm_doc_query --modle_name_or_path=<model_name_or_path>
 - `--top_n_docs_feed_llm`: To avoid feeding the LLM too many documents, we only feed the top N best matched documents to LLM. The default value is 4.
 - `--trust_remote_code`: Use this flag to trust remote code. It is optional.
 
-## How it works
+### How it works
 
 The script does the following:
 
