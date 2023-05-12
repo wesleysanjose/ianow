@@ -122,7 +122,7 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=int, default=5000, help='port number')
 
     args = parser.parse_args()
-    log.deubg(f'args: {args}')
+    log.debug(f'args: {args}')
 
     # Create app and register on_startup function and route
     app = web.Application()
