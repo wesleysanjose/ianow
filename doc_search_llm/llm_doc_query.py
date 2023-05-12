@@ -25,8 +25,8 @@ def main(args):
         chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
 
     # convert the documents to vectorstore
-    vectorstore_processor = VectorstoreProcessor()
-    vectorstore_processor.convert_from_docs(docs)
+    chroma_processor = ChromaProcessor()
+    ChromaProcessor.convert_from_docs(docs)
 
     if args.query is not None:
         # get the query string
