@@ -1,0 +1,14 @@
+pyyaml
+transformers<=4.28.1
+langchain
+gradio
+unstructured
+pdf2img
+pytesseract
+chromadb
+accelerate
+bitsandbytes
+fschat
+toml
+texttable
+protobuf<=3.20.3
