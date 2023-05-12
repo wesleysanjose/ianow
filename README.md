@@ -2,12 +2,26 @@
 
 This script allows you to perform document search using a Language Model (LLM). It involves loading documents from a directory, converting them into a vectorstore, and using an LLM model to answer queries based on these documents.
 
+Please make sure you have GPU available because the code is not ready for CPU.
+
+## conda env
+conda env is recommended, the code is tested against python 3.9, pytorch 1.17 and cuda 11.7 on a Nvidia RTX 3090.
+```bash
+conda create -n ianow
+conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.7 -c pytorch -c nvidia -n ianow
+conda install cudatoolkit-dev=11.7.0 -n jsllama4b -c conda-forge -n ianow
+conda activate ianow
+pip install -r requirements.txt
+```
+
 ## How to use
 
-You can use the script by running the following command:
+You can use the LLM model in local by providing a sys path or download the model from HF by using model name. The code is tested with viccuna-13b-v1.1.
 
 ```bash
-python <script_name.py> --modle_name_or_path=<model_name_or_path> --docs_root=<docs_root> --query=<query>
+git clone https://github.com/wesleysanjose/ianow
+cd ianow
+python -m doc_search_llm.llm_doc_query --modle_name_or_path=<model_name_or_path> --docs_root=<docs_root> --query=<query>
 ```
 
 ### Parameters:
@@ -23,12 +37,6 @@ python <script_name.py> --modle_name_or_path=<model_name_or_path> --docs_root=<d
 - `--top_n_docs_feed_llm`: To avoid feeding the LLM too many documents, we only feed the top N best matched documents to LLM. The default value is 4.
 - `--trust_remote_code`: Use this flag to trust remote code. It is optional.
 
-### Example:
-
-```bash
-python <script_name.py> --modle_name_or_path="gpt-2" --docs_root="/home/user/documents" --query="What is AI?"
-```
-
 ## How it works
 
 The script does the following:
@@ -42,6 +50,8 @@ The script does the following:
    - Searches for the top N best matched documents to reduce the scope.
    - Runs the LLM query by feeding the best matched documents.
 
-## Error Handling
-
-The script has robust error handling and logging, which will trace any issues that might occur during its execution. If any error occurs during loading the documents, converting documents to vectorstore, or loading the model, it will be logged and the script will stop execution.
+## Thanks
+inspired by
+https://github.com/hwchase17/langchain
+https://github.com/oobabooga/text-generation-webui
+https://github.com/LianjiaTech/BELLE
