@@ -5,10 +5,12 @@ This script allows you to perform document search using a Language Model (LLM). 
 Please make sure you have GPU available because the code is not ready for CPU.
 The test was done against viccuna-13b-v1.1 model and result looks good. The model by default is loaded as fp16/bf16 if specified, or even 8bits through the specificied argument.
 
-## gradio chat code - upload a document from UI and bot will answer the query based on the knowledge in the document
+## gradio chat code
+- upload a document from UI and bot will answer the query based on the knowledge in the document
 https://github.com/wesleysanjose/ianow/blob/main/doc_search_llm/servers/readme_chat.md
 
-## websocket streaming chat code - server pre-loads documents from specified directory, can answer the query from client through streaming
+## websocket streaming chat code
+- server pre-loads documents from specified directory, can answer the query from client through streaming
 https://github.com/wesleysanjose/ianow/blob/main/doc_search_llm/servers/readme.md
 
 ## conda env
