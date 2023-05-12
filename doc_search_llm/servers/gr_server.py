@@ -19,8 +19,6 @@ log = Log.get_logger(__name__)
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-vectorstore_processor = ChromaProcessor()
-
 def load_model(args):
 
     try:
@@ -79,7 +77,7 @@ def vectorstore_from_docs(vectorstore_processor, docs):
 
 
 def query_to_llm(vectorstore_processor, chain, query):
-    if vectorstore_processor.vectorstore is None:
+    if vectorstore_processor.vectorstore is not None:
         docs = vectorstore_processor.vectorstore.similarity_search(query, args.top_n_docs_feed_llm)
     else:
         log.error(f'Vectorstore is not loaded')
@@ -99,6 +97,8 @@ if __name__ == "__main__":
     args = load_args()
 
     chain = load_model(args)
+
+    vectorstore_processor = ChromaProcessor()
 
     # show the file content in the text box
     # show the chatbot response in the text box
