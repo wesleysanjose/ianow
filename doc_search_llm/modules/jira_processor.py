@@ -116,7 +116,8 @@ def langchain_test(args):
         llm = None
 
         # load the QA chain
-        chain = load_qa_chain(llm, chain_type="stuff")
+        # chain = load_qa_chain(llm, chain_type="stuff")
+        chain = load_qa_chain(llm)
         agent = initialize_agent(
             toolkit.get_tools(),
             llm,
