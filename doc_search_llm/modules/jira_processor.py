@@ -11,6 +11,8 @@ from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 from unittest.mock import patch
 
 from jira import JIRA
+from atlassian import Jira
+
 import os
 
 from doc_search_llm.servers.arg_parser import load_parser
@@ -28,16 +30,32 @@ class JiraProcessor:
     def __init__(self):
         self.jira_url = os.environ.get('JIRA_INSTANCE_URL')
         log.debug(f'Initializing JiraProcessor with {self.jira_url}')
+
         self.jira_username = os.environ.get('JIRA_USERNAME')
         # print first first 4 chars of jira_username
         log.debug(f'jira_username: {self.jira_username[:4]}')
+
         self.jira_password = os.environ.get('JIRA_PASSWORD')
         # print last 4 chars of password
         log.debug(f'jira_password: {self.jira_password[-4:]}')
+
+        self.api_token = os.environ.get('JIRA_API_TOKEN')
+        # print last 4 chars of api token
+        log.debug(f'api_token: {self.api_token[-4:]}')
+
         self.jira_client = None
 
-    # Connect to Jira
+    def token(self):
+        try:
+            self.jira_client = JIRA(
+                server=self.jira_url, username=self.jira_username, password=self.api_token)
+            log.info(f'Connected to Jira at {self.jira_url}')
+            return self.jira_client
+        except Exception as e:
+            log.error(f'Error connecting to Jira: {e}')
+            raise e
 
+    # Connect to Jira
     def connect(self):
         try:
             self.jira_client = JIRA(server=self.jira_url, basic_auth=(
@@ -92,13 +110,13 @@ class JiraProcessor:
 
 
 def simple_test():
-    jira_processor = JiraProcessor()
-    jira_processor.connect()
-    new_issue = jira_processor.create_issue()
-    print(new_issue)
-    issues = jira_processor.list_issues('DEV')
-    print(issues)
-
+    jira = Jira(
+        url=os.environ.get('JIRA_INSTANCE_URL'),
+        username=os.environ.get('JIRA_USERNAME'),
+        password='')
+    JQL = 'project = DEV AND issuetype = Task'
+    data = jira.jql(JQL)
+    print(data)
 
 def langchain_test(args):
     # load the LLM model
@@ -111,7 +129,7 @@ def langchain_test(args):
 
         # # create the LLM pipeline
         pipe = pipeline("text-generation", model=model,
-                         tokenizer=tokenizer, max_new_tokens=1024)
+                        tokenizer=tokenizer, max_new_tokens=1024)
         llm = HuggingFacePipeline(pipeline=pipe)
 
         # load the QA chain
@@ -135,9 +153,9 @@ def langchain_test(args):
 
             return values
 
-        #with patch.object(JiraAPIWrapper, 'validate_environment', new=new_validate_environment):
+        # with patch.object(JiraAPIWrapper, 'validate_environment', new=new_validate_environment):
         agent.run(
-                "make a new issue in project DEV to remind me to make more fried rice")
+            "make a new issue in project DEV to remind me to make more fried rice")
     except Exception as e:
         log.error(f'Error loading model: {e}')
         raise e
@@ -146,3 +164,4 @@ def langchain_test(args):
 if __name__ == '__main__':
     args = load_parser()
     langchain_test(args)
+    # simple_test()
