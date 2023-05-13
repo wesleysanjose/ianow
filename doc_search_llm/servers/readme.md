@@ -31,9 +31,3 @@ The script supports a number of command-line arguments:
 - `--doc_count_for_qa`: The number of documents to consider for question-answering (default is 4).
 - `--port`: The port number on which to run the WebSocket server (default is 5000).
 - `--trust_remote_code`: If set, trust remote code.
-
-## Examples
-### upload a NBA news txt
-![image](https://user-images.githubusercontent.com/28772823/238087007-dfd166c2-ca13-4254-9b2e-3349784d6513.jpg)
-### BOT reply based on the news
-![image](https://user-images.githubusercontent.com/28772823/238087003-6818390c-e367-43e3-9353-f1e52edb2016.jpg)
