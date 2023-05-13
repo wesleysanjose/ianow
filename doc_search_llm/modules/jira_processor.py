@@ -8,6 +8,8 @@ from langchain.chains.question_answering import load_qa_chain
 from transformers import pipeline
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 
+from unittest.mock import patch
+
 from jira import JIRA
 import os
 
@@ -41,6 +43,7 @@ class JiraProcessor:
             self.jira_client = JIRA(server=self.jira_url, basic_auth=(
                 self.jira_username, self.jira_password))
             log.info(f'Connected to Jira at {self.jira_url}')
+            return self.jira_client
         except Exception as e:
             log.error(f'Error connecting to Jira: {e}')
             raise e
@@ -106,10 +109,11 @@ def langchain_test(args):
 
         model, tokenizer = ModelProcessor.load_model(args)
 
-        # create the LLM pipeline
+        # # create the LLM pipeline
         pipe = pipeline("text-generation", model=model,
-                        tokenizer=tokenizer, max_new_tokens=1024)
+                         tokenizer=tokenizer, max_new_tokens=1024)
         llm = HuggingFacePipeline(pipeline=pipe)
+        llm = None
 
         # load the QA chain
         chain = load_qa_chain(llm, chain_type="stuff")
@@ -119,8 +123,21 @@ def langchain_test(args):
             agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
             verbose=True
         )
-        agent.run(
-            "make a new issue in project DEV to remind me to make more fried rice")
+
+        # patch the langchain jira cloud login by using jira server login
+        from typing import Dict
+
+        def new_validate_environment(cls, values: Dict) -> Dict:
+            """Validate that api key and python package exists in environment."""
+            jira_processor = JiraProcessor()
+            jira = jira_processor.connect()
+            values["jira"] = jira
+
+            return values
+
+        with patch.object(JiraAPIWrapper, 'validate_environment', new=new_validate_environment):
+            agent.run(
+                "make a new issue in project DEV to remind me to make more fried rice")
     except Exception as e:
         log.error(f'Error loading model: {e}')
         raise e
