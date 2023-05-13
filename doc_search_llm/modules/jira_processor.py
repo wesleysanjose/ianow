@@ -128,6 +128,7 @@ def langchain_test(args):
 
         def new_validate_environment(cls, values: Dict) -> Dict:
             """Validate that api key and python package exists in environment."""
+            log.debug(f'hijacked successfully')
             jira_processor = JiraProcessor()
             jira = jira_processor.connect()
             values["jira"] = jira
