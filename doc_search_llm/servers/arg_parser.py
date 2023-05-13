@@ -28,5 +28,6 @@ def load_parser():
     parser.add_argument('--doc_count_for_qa', type=int,
                         default=4,  help='doc count for QA')
     parser.add_argument('--port', type=int, default=5000, help='port number')
+    parser.add_argument('--trust_remote_code', action='store_true', help='Trust remote code')
 
     return parser.parse_args()
