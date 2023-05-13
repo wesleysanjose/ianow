@@ -155,7 +155,7 @@ def langchain_test(args):
 
         # with patch.object(JiraAPIWrapper, 'validate_environment', new=new_validate_environment):
         agent.run(
-            "get all the issues from project devops")
+            "make a new issue in project devops to remind me to make more fried rice")
     except Exception as e:
         log.error(f'Error loading model: {e}')
         raise e
