@@ -113,11 +113,9 @@ def langchain_test(args):
         pipe = pipeline("text-generation", model=model,
                          tokenizer=tokenizer, max_new_tokens=1024)
         llm = HuggingFacePipeline(pipeline=pipe)
-        llm = None
 
         # load the QA chain
-        # chain = load_qa_chain(llm, chain_type="stuff")
-        chain = load_qa_chain(llm)
+        chain = load_qa_chain(llm, chain_type="stuff")
         agent = initialize_agent(
             toolkit.get_tools(),
             llm,
