@@ -116,13 +116,14 @@ def simple_test():
         password=os.environ.get('API_TOKEN'),
         cloud=True)
     jira.issue_create(
-    fields={
-        "project": {"key": "INC"},
-        "issuetype": {"name": "Task"},
-        "summary": "test rest",
-        "description": "rest rest"
-    }
-)
+        fields={
+            "project": {"key": "INC"},
+            "issuetype": {"name": "Task"},
+            "summary": "test rest",
+            "description": "rest rest"
+        }
+    )
+
 
 def langchain_test(args):
     # load the LLM model
@@ -147,11 +148,11 @@ def langchain_test(args):
             verbose=True
         )
 
-        # with patch.object(JiraAPIWrapper, 'validate_environment', new=new_validate_environment):
-        agent.run(args.query if args.query else "make a new issue in project INC to remind me that I need to make more fried rice")
     except Exception as e:
         log.error(f'Error loading model: {e}')
         raise e
+        # with patch.object(JiraAPIWrapper, 'validate_environment', new=new_validate_environment):
+    agent.run(args.query if args.query else "make a new issue in project INC to remind me that I need to make more fried rice")
 
 
 if __name__ == '__main__':
