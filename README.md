@@ -3,7 +3,7 @@
 #
 ![image](https://user-images.githubusercontent.com/28772823/238087003-6818390c-e367-43e3-9353-f1e52edb2016.jpg)
 
-# [中文](./zh/README.md)
+## [Chinese 中文](./zh/README.md)
 
 # Query/Answer using local documents and local LLM (Langchain integration)
 
