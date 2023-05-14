@@ -5,6 +5,8 @@
 
 ## [Chinese 中文](./zh/README.md)
 
+<details>
+<summary> Document Chat using Command Line</summary>
 # Query/Answer using local documents and local LLM (Langchain integration)
 
 This script allows you to perform document search using a Language Model (LLM). It involves loading documents from a directory, converting them into a vectorstore, and using an LLM model to answer queries (as arg passed through the application) based on these documents.
@@ -72,3 +74,90 @@ inspired by
 - https://github.com/hwchase17/langchain
 - https://github.com/oobabooga/text-generation-webui
 - https://github.com/LianjiaTech/BELLE
+</details>
+
+<details>
+<summary>Document Chant using Websocket Streaming</summary>
+# Query/Answer with local documents and local LLM via WebSocket streaming
+
+This script provides a WebSocket server that uses a Language Model (LLM) for document searching. It allows clients to send search queries over WebSocket, and the server will respond answer based on the documents provided in docs_root.
+
+## How to Use:
+
+To run the WebSocket server, execute the script and provide the necessary command-line arguments:
+
+```bash
+python -m  --model_name_or_path model_path --docs_root docs_directory --global_kwargs **/*.txt
+```
+
+After the server has started, you can connect to it over WebSocket from your client and send your search queries. The server will respond with the answers.
+
+From macbook, you can use websocat for testing
+```bash
+websocat ws://<WS_SERVER>:5000/ws
+```
+
+## Command-line Arguments:
+
+The script supports a number of command-line arguments:
+
+- `--model_name_or_path`: The name or path of the LLM model to be used for the query.
+- `--chunk_size`: The size of chunks in which to divide the documents (default is 1000).
+- `--chunk_overlap`: The overlap between chunks (default is 100).
+- `--docs_root`: The root directory of the documents to be loaded.
+- `--global_kwargs`: Global arguments to be passed to the directory processor (default is "**/*.txt").
+- `--load_in_8bit`: If set, load the model in 8 bits.
+- `--bf16`: If set, use bf16.
+- `--doc_count_for_qa`: The number of documents to consider for question-answering (default is 4).
+- `--port`: The port number on which to run the WebSocket server (default is 5000).
+- `--trust_remote_code`: If set, trust remote code.
+
+</details>
+
+<details>
+<Summary>Document chat using Gradio UI</Summary>
+
+# Query/Answer Bot using local Documents and local LLM model through Gradio
+
+This script provides an interactive interface using Gradio for query/answer by using local document as knowledge base with a Language Model (LLM). Users can upload a document file and chat with the bot, which uses the LLM to answer based on the knowledge of the documents.
+
+## How to Use:
+
+1. Run the script with the necessary command-line arguments.
+
+2. The Gradio interface will launch in your default web browser.
+
+3. Upload a document file using the file upload feature.
+
+4. Chat with the bot using the chat interface.
+
+## Command-line Arguments:
+
+The script supports a number of command-line arguments:
+
+- `--model_name_or_path`: The name or path of the LLM model to be used for the query.
+- `--chunk_size`: The size of chunks in which to divide the documents (default is 1000).
+- `--chunk_overlap`: The overlap between chunks (default is 100).
+- `--load_in_8bit`: If set, load the model in 8 bits.
+- `--bf16`: If set, use bf16.
+- `--top_n_docs_feed_llm`: To avoid feeding too many documents to LLM, only top N best-matched documents are fed (default is 4).
+- `--port`: The port number on which to run the Gradio interface (default is 7860).
+- `--server_name`: The server name on which to run the Gradio interface (default is '0.0.0.0').
+- `--trust_remote_code`: If set, trust remote code.
+
+## Running the Gradio Interface:
+
+To run the Gradio interface, execute the script and provide the necessary command-line arguments:
+
+```bash
+python -m doc_search_llm.servers.gr_server --model_name_or_path model_path
+```
+
+After the Gradio interface has launched, you can interact with it in your web browser (http://<CHAT_SERVER>:7860):
+
+1. Upload a document file.
+![image](https://user-images.githubusercontent.com/28772823/238087007-dfd166c2-ca13-4254-9b2e-3349784d6513.jpg)
+2. Use the chat interface to send query to the bot. The bot will respond with the answer based on the knowledge from the uploaded documents.
+![image](https://user-images.githubusercontent.com/28772823/238087003-6818390c-e367-43e3-9353-f1e52edb2016.jpg)
+
+</details>
