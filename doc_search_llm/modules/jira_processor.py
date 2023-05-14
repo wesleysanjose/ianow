@@ -120,7 +120,7 @@ def simple_test():
         "project": {"key": "INC"},
         "issuetype": {"name": "Task"},
         "summary": "test rest",
-        "description": "rest rest",
+        "description": "rest rest"
     }
 )
 
@@ -147,21 +147,9 @@ def langchain_test(args):
             verbose=True
         )
 
-        # patch the langchain jira cloud login by using jira server login
-        from typing import Dict
-
-        def new_validate_environment(cls, values: Dict) -> Dict:
-            """Validate that api key and python package exists in environment."""
-            log.debug(f'hijacked successfully')
-            jira_processor = JiraProcessor()
-            jira = jira_processor.connect()
-            values["jira"] = jira
-
-            return values
-
         # with patch.object(JiraAPIWrapper, 'validate_environment', new=new_validate_environment):
         agent.run(
-            "make a new issue in project INC to remind me to make more fried rice")
+            "make a new issue in project INC to remind me that I have a task to make more fried rice")
     except Exception as e:
         log.error(f'Error loading model: {e}')
         raise e
@@ -170,4 +158,4 @@ def langchain_test(args):
 if __name__ == '__main__':
     args = load_parser()
     langchain_test(args)
-    #simple_test()
+    # simple_test()
