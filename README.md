@@ -3,10 +3,11 @@
 #
 ![image](https://user-images.githubusercontent.com/28772823/238087003-6818390c-e367-43e3-9353-f1e52edb2016.jpg)
 
-## [Chinese 中文](./zh/README.md)
+### [Chinese 中文](./zh/README.md)
 
 <details>
 <summary>Document Chant using Websocket Streaming</summary>
+
 # Query/Answer with local documents and local LLM via WebSocket streaming
 
 This script provides a WebSocket server that uses a Language Model (LLM) for document searching. It allows clients to send search queries over WebSocket, and the server will respond answer based on the documents provided in docs_root.
@@ -16,7 +17,7 @@ This script provides a WebSocket server that uses a Language Model (LLM) for doc
 To run the WebSocket server, execute the script and provide the necessary command-line arguments:
 
 ```bash
-python -m  --model_name_or_path model_path --docs_root docs_directory --global_kwargs **/*.txt
+python -m doc_search_llm.servers.ws_server --model_name_or_path <model_path> --docs_root <docs_directory> --global_kwargs **/*.txt
 ```
 
 After the server has started, you can connect to it over WebSocket from your client and send your search queries. The server will respond with the answers.
@@ -79,7 +80,7 @@ The script supports a number of command-line arguments:
 To run the Gradio interface, execute the script and provide the necessary command-line arguments:
 
 ```bash
-python -m doc_search_llm.servers.gr_server --model_name_or_path model_path
+python -m doc_search_llm.servers.gr_server --model_name_or_path <model_path>
 ```
 
 After the Gradio interface has launched, you can interact with it in your web browser (http://<CHAT_SERVER>:7860):
