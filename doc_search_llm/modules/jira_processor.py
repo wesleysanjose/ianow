@@ -140,7 +140,6 @@ def langchain_test(args):
         llm = HuggingFacePipeline(pipeline=pipe)
 
         # load the QA chain
-        chain = load_qa_chain(llm, chain_type="stuff")
         agent = initialize_agent(
             toolkit.get_tools(),
             llm,
@@ -152,7 +151,7 @@ def langchain_test(args):
         log.error(f'Error loading model: {e}')
         raise e
         # with patch.object(JiraAPIWrapper, 'validate_environment', new=new_validate_environment):
-    agent.run(args.query if args.query else "make a new issue in project INC to remind me that I need to make more fried rice")
+    agent.run("make a new issue in project INC to remind me that I need to make more fried rice")
 
 
 if __name__ == '__main__':
