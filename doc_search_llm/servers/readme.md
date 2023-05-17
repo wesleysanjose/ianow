@@ -7,7 +7,7 @@ This script provides a WebSocket server that uses a Language Model (LLM) for doc
 To run the WebSocket server, execute the script and provide the necessary command-line arguments:
 
 ```bash
-python -m  --model_name_or_path model_path --docs_root docs_directory --kwargs **/*.txt
+python -m  --model_name_or_path model_path --docs_root docs_directory --kwargs "**/*.txt"
 ```
 
 After the server has started, you can connect to it over WebSocket from your client and send your search queries. The server will respond with the answers.

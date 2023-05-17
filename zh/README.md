@@ -17,7 +17,7 @@
 要运行 WebSocket 服务器，请执行脚本并提供必要的命令行参数：
 
 ```bash
-python -m  doc_search_llm.servers.ws_server --model_name_or_path model_path --docs_root docs_directory --kwargs **/*.txt
+python -m  doc_search_llm.servers.ws_server --model_name_or_path model_path --docs_root docs_directory --kwargs "**/*.txt"
 ```
 
 服务器启动后，您可以从客户端通过WebSocket连接到它并发送搜索查询。服务器将回应答案。
