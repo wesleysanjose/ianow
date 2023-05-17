@@ -43,7 +43,8 @@ def main(args):
             embeddings = None
             if args.llamacpp:
                 template = """Question: {question}
-                    Answer: Let's think step by step."""
+                    Answer:
+                    """
 
                 prompt = PromptTemplate(template=template, input_variables=["question"])
                 model, embeddings = ModelProcessor.load_llamacpp(args)
