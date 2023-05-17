@@ -13,9 +13,6 @@ class ChromaProcessor:
         log.debug(f'Initializing vectorstore processor with {embeddings}')
         log.debug(f'Persisting vectorstore to {persist_directory}')
 
-        if persist_directory and not os.path.isdir(persist_directory):
-            raise ValueError('Invalid directory path provided')
-
         self.embeddings = None
         self.vectorstore = None
         self.persist_directory = persist_directory
