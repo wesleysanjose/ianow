@@ -14,3 +14,4 @@ texttable
 protobuf<=3.20.3
 jira
 atlassian-python-api
+llama-cpp-python

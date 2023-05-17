@@ -31,7 +31,7 @@ class ModelProcessor:
             model = LlamaCpp(
                 model_path=args.modle_name_or_path, callback_manager=callback_manager, verbose=True
             )
-            embeddings = LlamaCppEmbeddings(model)
+            embeddings = LlamaCppEmbeddings(model_path=args.modle_name_or_path)
         except Exception as e:
             log.error(
                 f'Failed to load the model from {args.modle_name_or_path}')

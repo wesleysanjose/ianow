@@ -30,7 +30,6 @@ def main(args):
     try:
         docs = directory_processor.load(
             chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
-        chroma_processor.convert_from_docs(docs)
     except Exception as e:
         log.error(f'Error converting documents to vectorstore: {e}')
         raise e
@@ -48,11 +47,6 @@ def main(args):
             else:
                 model, tokenizer = ModelProcessor.load_model(args)
 
-                # convert the documents to vectorstore
-                chroma_processor = ChromaProcessor()
-                chroma_processor.convert_from_docs(docs, embeddings)
-
-
                 # create the LLM pipeline
                 pipe = pipeline("text-generation", model=model,
                                 tokenizer=tokenizer, max_new_tokens=1024)
@@ -63,14 +57,18 @@ def main(args):
         except Exception as e:
             log.error(f'Error loading model: {e}')
             raise e
+        
+        # convert the documents to vectorstore
+        chroma_processor = ChromaProcessor()
+        chroma_processor.convert_from_docs(docs, embeddings)
 
         # search top N best matched documents to reduce the scope
-        docs = chroma_processor.vectorstore.similarity_search(
+        top_matched_docs = chroma_processor.vectorstore.similarity_search(
             query, args.top_n_docs_feed_llm, include_metadata=True)
-        log.info(f'similarity found {len(docs)} documents can be feed to LLM')
+        log.info(f'similarity found {len(top_matched_docs)} documents can be feed to LLM')
 
         # run the LLM query by feeding the best matched documents
-        result = chain.run(input_documents=docs, question=query)
+        result = chain.run(input_documents=top_matched_docs, question=query)
         log.info(f'LLM query: {query}')
         log.info(f'LLM result: {result}')
     else:
