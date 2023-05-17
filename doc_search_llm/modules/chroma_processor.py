@@ -19,6 +19,7 @@ class ChromaProcessor:
 
     def convert_from_docs(self, docs, embeddings=None):
         log.debug(f'Converting {len(docs)} documents to vectorstore')
+        log.debug(f'Using embeddings: {self.embeddings}')
         try:
             self.vectorstore = Chroma.from_documents(
                 docs, self.embeddings if embeddings is None else embeddings, persist_directory=self.persist_directory)

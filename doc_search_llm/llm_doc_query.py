@@ -48,6 +48,13 @@ def main(args):
                 prompt = PromptTemplate(template=template, input_variables=["question"])
                 model, embeddings = ModelProcessor.load_llamacpp(args)
                 chain = LLMChain(prompt=prompt, llm=model)
+            elif args.gpt4all:
+                template = """Question: {question}
+                    Answer: Let's think step by step."""
+
+                prompt = PromptTemplate(template=template, input_variables=["question"])
+                model = ModelProcessor.load_llamacpp(args)
+                chain = LLMChain(prompt=prompt, llm=model)
             else:
                 model, tokenizer = ModelProcessor.load_model(args)
 
@@ -104,6 +111,7 @@ if __name__ == "__main__":
                         default=4,  help='to avoid LLM too many documents, we only feed top N best matched documents to LLM')
     parser.add_argument('--trust_remote_code', action='store_true', help='Trust remote code')
     parser.add_argument('--llamacpp', action='store_true', help='Use llamacpp')
+    parser.add_argument('--gpt4all', action='store_true',  help='Use gpt4all')
     args = parser.parse_args()
 
     main(args)

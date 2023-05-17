@@ -7,6 +7,7 @@ from langchain.llms import LlamaCpp
 from langchain import PromptTemplate, LLMChain
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain.llms import GPT4All
 
 import sys
 from pathlib import Path
@@ -17,6 +18,26 @@ log = Log.get_logger(__name__)
 
 
 class ModelProcessor:
+
+    @staticmethod
+    def load_gpt4all(args):
+        log.debug(f'Loading model from {args}')
+        
+        try:
+            # Callbacks support token-wise streaming
+            callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+            # Verbose is required to pass to the callback manager
+
+            # Make sure the model path is correct for your system!
+            model = GPT4All(
+                model=args.modle_name_or_path, callback_manager=callback_manager, verbose=True
+            )
+        except Exception as e:
+            log.error(
+                f'Failed to load the model from {args.modle_name_or_path}')
+            log.error(f'Exception: {e}')
+            raise e
+        return model
 
     @staticmethod
     def load_llamacpp(args):
