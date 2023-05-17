@@ -42,8 +42,12 @@ def main(args):
         try:
             embeddings = None
             if args.llamacpp:
+                template = """Question: {question}
+                    Answer: Let's think step by step."""
+
+                prompt = PromptTemplate(template=template, input_variables=["question"])
                 model, embeddings = ModelProcessor.load_llamacpp(args)
-                chain = LLMChain(model, PromptTemplate("stuff"))
+                chain = LLMChain(prompt=prompt, llm=model)
             else:
                 model, tokenizer = ModelProcessor.load_model(args)
 
