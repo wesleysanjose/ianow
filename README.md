@@ -125,12 +125,12 @@ You can use the LLM model in local by providing a sys path or download the model
 ```bash
 git clone https://github.com/wesleysanjose/ianow
 cd ianow
-python -m doc_search_llm.llm_doc_query --modle_name_or_path=<model_name_or_path> --docs_root=<docs_root> --query=<query>
+python -m doc_search_llm.llm_doc_query --model_name_or_path=<model_name_or_path> --docs_root=<docs_root> --query=<query>
 ```
 
 #### Parameters:
 
-- `--modle_name_or_path`: This is the model name or path for the LLM query. This is a required argument.
+- `--model_name_or_path`: This is the model name or path for the LLM query. This is a required argument.
 - `--chunk_size`: This is the chunk size and the default value is 1000.
 - `--chunk_overlap`: This is the chunk overlap and the default value is 100.
 - `--docs_root`: This is the root directory of your documents. This is a required argument.

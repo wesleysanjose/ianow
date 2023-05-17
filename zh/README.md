@@ -122,12 +122,12 @@ pip install -r requirements.txt
 ```bash
 git clone https://github.com/wesleysanjose/ianow
 cd ianow
-python -m doc_search_llm.llm_doc_query --modle_name_or_path=<model_name_or_path> --docs_root=<docs_root> --query=<query>
+python -m doc_search_llm.llm_doc_query --model_name_or_path=<model_name_or_path> --docs_root=<docs_root> --query=<query>
 ```
 
 #### 参数:
 
-- `--modle_name_or_path`：这是用于查询本地或者网络 LLM 模型名称或路径，是必需的参数。
+- `--model_name_or_path`：这是用于查询本地或者网络 LLM 模型名称或路径，是必需的参数。
 - `--chunk_size`：可以把上传的文档进一步分块，块大小默认值为 1000。
 - `--chunk_overlap`：块之间可以重叠，其默认值为100。
 - `--docs_root`：这是文档的根目录，是必需的参数。

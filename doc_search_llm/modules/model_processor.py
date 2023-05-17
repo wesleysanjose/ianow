@@ -30,11 +30,11 @@ class ModelProcessor:
 
             # Make sure the model path is correct for your system!
             model = GPT4All(
-                model=args.modle_name_or_path, callback_manager=callback_manager, verbose=True
+                model=args.model_name_or_path, callback_manager=callback_manager, verbose=True
             )
         except Exception as e:
             log.error(
-                f'Failed to load the model from {args.modle_name_or_path}')
+                f'Failed to load the model from {args.model_name_or_path}')
             log.error(f'Exception: {e}')
             raise e
         return model
@@ -50,12 +50,12 @@ class ModelProcessor:
 
             # Make sure the model path is correct for your system!
             model = LlamaCpp(
-                model_path=args.modle_name_or_path, callback_manager=callback_manager, verbose=True
+                model_path=args.model_name_or_path, callback_manager=callback_manager, verbose=True
             )
-            embeddings = LlamaCppEmbeddings(model_path=args.modle_name_or_path)
+            embeddings = LlamaCppEmbeddings(model_path=args.model_name_or_path)
         except Exception as e:
             log.error(
-                f'Failed to load the model from {args.modle_name_or_path}')
+                f'Failed to load the model from {args.model_name_or_path}')
             log.error(f'Exception: {e}')
             raise e
         return model, embeddings
@@ -64,7 +64,7 @@ class ModelProcessor:
     @staticmethod
     def load_model(args):
         log.debug(f'Loading model from {args}')
-        if args is None or not hasattr(args, 'modle_name_or_path') or args.modle_name_or_path is None:
+        if args is None or not hasattr(args, 'model_name_or_path') or args.model_name_or_path is None:
             log.error(f'Invalid arguments or no model name path provided')
             raise ValueError('Invalid arguments or no model name path provided')
         else:
@@ -72,28 +72,28 @@ class ModelProcessor:
             try:
                 if args.load_in_8bit:
                     log.info("Model Loading in 8 bits")
-                    model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path,
+                    model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path,
                                                                  device_map="auto",
                                                                  quantization_config=BitsAndBytesConfig(
                                                                      load_in_8bit=True, llm_int8_enable_fp32_cpu_offload=True),
                                                                  trust_remote_code=args.trust_remote_code)
                 else:
                     log.info("Default model loading in fp16 or bf16")
-                    model = AutoModelForCausalLM.from_pretrained(args.modle_name_or_path,
+                    model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path,
                                                                  device_map="auto",
                                                                  torch_dtype=torch.bfloat16 if args.bf16 else torch.float16,
                                                                  trust_remote_code=args.trust_remote_code)
 
                 if type(model) is LlamaForCausalLM:
                     tokenizer = LlamaTokenizer.from_pretrained(
-                        args.modle_name_or_path, clean_up_tokenization_spaces=True)
+                        args.model_name_or_path, clean_up_tokenization_spaces=True)
                 else:
                     tokenizer = AutoTokenizer.from_pretrained(
-                        args.modle_name_or_path, clean_up_tokenization_spaces=True)
+                        args.model_name_or_path, clean_up_tokenization_spaces=True)
 
             except Exception as e:
                 log.error(
-                    f'Failed to load the model from {args.modle_name_or_path}')
+                    f'Failed to load the model from {args.model_name_or_path}')
                 log.error(f'Exception: {e}')
                 raise e
             return model, tokenizer

@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
     # process command line arguments
     parser = argparse.ArgumentParser(description='Process the arguments.')
-    parser.add_argument('--modle_name_or_path', type=str,
+    parser.add_argument('--model_name_or_path', type=str,
                         help='model name or path for LLM query')
     parser.add_argument('--chunk_size', type=int, default=1000,
                         help='chunk size (default: 1000)')
