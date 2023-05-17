@@ -25,16 +25,11 @@ def main(args):
     # load the documents from the docs directory
     directory_processor = DirectoryProcessor(
         docs_root=args.docs_root, global_kwargs=args.global_kwargs)
-
+    chroma_processor = ChromaProcessor()
+    
     try:
         docs = directory_processor.load(
             chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
-    except Exception as e:
-        log.error(f'Error loading documents: {e}')
-        raise e
-
-    
-    try:
         chroma_processor.convert_from_docs(docs)
     except Exception as e:
         log.error(f'Error converting documents to vectorstore: {e}')
