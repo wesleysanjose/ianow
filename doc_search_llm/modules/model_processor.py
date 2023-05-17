@@ -2,6 +2,11 @@ from utils.simple_logger import Log
 from transformers import AutoTokenizer, AutoModelForCausalLM, LlamaTokenizer, LlamaForCausalLM, BitsAndBytesConfig
 import torch
 
+from langchain.embeddings import LlamaCppEmbeddings
+from langchain.llms import LlamaCpp
+from langchain import PromptTemplate, LLMChain
+from langchain.callbacks.manager import CallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 import sys
 from pathlib import Path
@@ -13,6 +18,28 @@ log = Log.get_logger(__name__)
 
 class ModelProcessor:
 
+    @staticmethod
+    def load_llamacpp(args):
+        log.debug(f'Loading model from {args}')
+        
+        try:
+            # Callbacks support token-wise streaming
+            callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+            # Verbose is required to pass to the callback manager
+
+            # Make sure the model path is correct for your system!
+            model = LlamaCpp(
+                model_path=args.modle_name_or_path, callback_manager=callback_manager, verbose=True
+            )
+            embeddings = LlamaCppEmbeddings(model)
+        except Exception as e:
+            log.error(
+                f'Failed to load the model from {args.modle_name_or_path}')
+            log.error(f'Exception: {e}')
+            raise e
+        return model, embeddings
+
+    # load the model
     @staticmethod
     def load_model(args):
         log.debug(f'Loading model from {args}')
