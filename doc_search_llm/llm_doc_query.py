@@ -1,3 +1,4 @@
+from langchain import LLMChain, PromptTemplate
 from doc_search_llm.modules.model_processor import ModelProcessor
 from doc_search_llm.modules.directory_processor import DirectoryProcessor
 from doc_search_llm.modules.chroma_processor import ChromaProcessor
@@ -18,7 +19,6 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 log = Log.get_logger(__name__)
 
-
 def main(args):
     log.debug(f'args: {args}')
 
@@ -33,8 +33,7 @@ def main(args):
         log.error(f'Error loading documents: {e}')
         raise e
 
-    # convert the documents to vectorstore
-    chroma_processor = ChromaProcessor()
+    
     try:
         chroma_processor.convert_from_docs(docs)
     except Exception as e:
@@ -47,15 +46,25 @@ def main(args):
 
         # load the LLM model
         try:
-            model, tokenizer = ModelProcessor.load_model(args)
+            embeddings = None
+            if args.llamacpp:
+                model, embeddings = ModelProcessor.load_model(args, llamacpp=True)
+                chain = LLMChain(model, embeddings)
+            else:
+                model, tokenizer = ModelProcessor.load_model(args)
 
-            # create the LLM pipeline
-            pipe = pipeline("text-generation", model=model,
-                            tokenizer=tokenizer, max_new_tokens=1024)
-            llm = HuggingFacePipeline(pipeline=pipe)
+                # convert the documents to vectorstore
+                chroma_processor = ChromaProcessor()
+                chroma_processor.convert_from_docs(docs, embeddings)
 
-            # load the QA chain
-            chain = load_qa_chain(llm, chain_type="stuff")
+
+                # create the LLM pipeline
+                pipe = pipeline("text-generation", model=model,
+                                tokenizer=tokenizer, max_new_tokens=1024)
+                llm = HuggingFacePipeline(pipeline=pipe)
+
+                # load the QA chain
+                chain = load_qa_chain(llm, chain_type="stuff")
         except Exception as e:
             log.error(f'Error loading model: {e}')
             raise e
@@ -97,6 +106,7 @@ if __name__ == "__main__":
     parser.add_argument('--top_n_docs_feed_llm', type=int,
                         default=4,  help='to avoid LLM too many documents, we only feed top N best matched documents to LLM')
     parser.add_argument('--trust_remote_code', action='store_true', help='Trust remote code')
+    parser.add_argument('--llamacpp', action='store_true', help='Use llamacpp')
     args = parser.parse_args()
 
     main(args)
