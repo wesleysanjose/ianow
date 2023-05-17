@@ -43,7 +43,7 @@ def main(args):
         try:
             embeddings = None
             if args.llamacpp:
-                model, embeddings = ModelProcessor.load_model(args)
+                model, embeddings = ModelProcessor.load_llamacpp(args)
                 chain = LLMChain(model, embeddings)
             else:
                 model, tokenizer = ModelProcessor.load_model(args)
