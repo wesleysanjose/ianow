@@ -71,7 +71,7 @@ async def on_startup(app):
     args = app['args']
 
     directory_processor = DirectoryProcessor(
-        docs_root=args.docs_root, global_kwargs=args.global_kwargs)
+        docs_root=args.docs_root, kwargs=args.kwargs)
     try:
         docs = directory_processor.load(
             chunk_size=args.chunk_size, chunk_overlap=args.chunk_overlap)
@@ -114,7 +114,7 @@ if __name__ == "__main__":
                         default=100, help='chunk overlap (default: 100)')
     parser.add_argument('--docs_root', type=str,
                         required=True, help='docs root directory')
-    parser.add_argument('--global_kwargs', type=str,
+    parser.add_argument('--kwargs', type=str,
                         default="**/*.txt", help='global kwargs (default: **/*.txt')
     parser.add_argument('--persist_directory', type=str, default="chroma_storage",
                         help='persist directory (default: chroma_storage')

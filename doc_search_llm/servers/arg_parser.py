@@ -18,7 +18,7 @@ def load_parser():
     parser.add_argument('--chunk_overlap', type=int,
                         default=100, help='chunk overlap (default: 100)')
     parser.add_argument('--docs_root', type=str,help='docs root directory')
-    parser.add_argument('--global_kwargs', type=str,
+    parser.add_argument('--kwargs', type=str,
                         default="**/*.txt", help='global kwargs (default: **/*.txt')
     parser.add_argument('--query', type=str,
                         help='query string, used to query against the docs')

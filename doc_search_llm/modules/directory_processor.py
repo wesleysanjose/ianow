@@ -8,23 +8,23 @@ sys.path.append(str(Path(__file__).parent.parent.absolute()))
 log = Log.get_logger(__name__)
 
 # docs_root = "/home/missa/dev/"
-# global_kwargs = "**/*.md"
+# kwargs = "**/*.md"
 
 
 class DirectoryProcessor:
-    def __init__(self, docs_root, global_kwargs="**/*.*"):
+    def __init__(self, docs_root, kwargs="**/*.*"):
         log.debug(f'Initializing directory processor with {docs_root}')
-        log.debug(f'Global kwargs: {global_kwargs}')
+        log.debug(f'Global kwargs: {kwargs}')
 
         if not Path(docs_root).is_dir():
             log.error(f'Invalid directory path: {docs_root}')
             raise ValueError('Invalid directory path')
-        if not isinstance(global_kwargs, str):
-            log.error(f'Invalid global keyword: {global_kwargs}')
+        if not isinstance(kwargs, str):
+            log.error(f'Invalid global keyword: {kwargs}')
             raise ValueError('Invalid global keyword')
 
         self.docs_root = docs_root
-        self.global_kwargs = global_kwargs
+        self.kwargs = kwargs
         self.docs = []
 
     def load(self, chunk_size = 0, chunk_overlap = 0):
@@ -33,7 +33,7 @@ class DirectoryProcessor:
         log.debug(f'chunk_overlap: {chunk_overlap}')
 
         try:
-            loader = DirectoryLoader(self.docs_root, self.global_kwargs)
+            loader = DirectoryLoader(self.docs_root, self.kwargs)
             self.docs = loader.load()
             log.info(f'You have loaded {len(self.docs)} document(s)')
         except Exception as e:

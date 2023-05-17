@@ -24,7 +24,7 @@ def main(args):
 
     # load the documents from the docs directory
     directory_processor = DirectoryProcessor(
-        docs_root=args.docs_root, global_kwargs=args.global_kwargs)
+        docs_root=args.docs_root, kwargs=args.kwargs)
     chroma_processor = ChromaProcessor()
     
     try:
@@ -90,7 +90,7 @@ if __name__ == "__main__":
                         default=100, help='chunk overlap (default: 100)')
     parser.add_argument('--docs_root', type=str,
                         required=True, help='docs root directory')
-    parser.add_argument('--global_kwargs', type=str,
+    parser.add_argument('--kwargs', type=str,
                         default="**/*.txt", help='global kwargs (default: **/*.txt')
     parser.add_argument('--query', type=str, required=True,
                         help='query string, used to query against LLM with the context of loaded documents')

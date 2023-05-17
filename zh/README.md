@@ -17,7 +17,7 @@
 要运行 WebSocket 服务器，请执行脚本并提供必要的命令行参数：
 
 ```bash
-python -m  doc_search_llm.servers.ws_server --model_name_or_path model_path --docs_root docs_directory --global_kwargs **/*.txt
+python -m  doc_search_llm.servers.ws_server --model_name_or_path model_path --docs_root docs_directory --kwargs **/*.txt
 ```
 
 服务器启动后，您可以从客户端通过WebSocket连接到它并发送搜索查询。服务器将回应答案。
@@ -35,7 +35,7 @@ websocat ws://<WS_SERVER>:5000/ws
 - `--chunk_size`：将文档分割的块的大小（默认为1000）。
 - `--chunk_overlap`：块之间的重叠（默认为100）。
 - `--docs_root`：要加载的文档的根目录。
-- `--global_kwargs`：传递给目录处理器的全局参数（默认为 "**/*.txt"）。
+- `--kwargs`：传递给目录处理器的全局参数（默认为 "**/*.txt"）。
 - `--load_in_8bit`：如果设置，以8位加载模型。
 - `--bf16`：如果设置，使用bf16。
 - `--doc_count_for_qa`：考虑问题回答的文档数量（默认为4）。
@@ -131,7 +131,7 @@ python -m doc_search_llm.llm_doc_query --modle_name_or_path=<model_name_or_path>
 - `--chunk_size`：可以把上传的文档进一步分块，块大小默认值为 1000。
 - `--chunk_overlap`：块之间可以重叠，其默认值为100。
 - `--docs_root`：这是文档的根目录，是必需的参数。
-- `--global_kwargs`：这此参数用于过滤要加载的文档，默认值为`**/*.txt`。
+- `--kwargs`：这此参数用于过滤要加载的文档，默认值为`**/*.txt`。
 - `--query`：这是你的查询，用于在加载的文档的上下文中对 LLM 进行查询，这是必需的参数。
 - `--load_in_8bit`：使用此标志以 8 位加载模型，这是可选的。
 - `--bf16`：如果GPU支持，使用此标志以 bf16 加载模型，否则将以 fp16 加载。这是可选的。
