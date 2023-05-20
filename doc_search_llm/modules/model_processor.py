@@ -97,11 +97,15 @@ class ModelProcessor:
                 if type(model) is LlamaForCausalLM:
                     log.debug(f'Loading LlamaTokenizer')
                     tokenizer = LlamaTokenizer.from_pretrained(
-                        args.model_name_or_path, clean_up_tokenization_spaces=True)
+                        args.model_name_or_path, 
+                        trust_remote_code=args.trust_remote_code,
+                        clean_up_tokenization_spaces=True)
                 else:
                     log.debug(f'Loading AutoTokenizer')
                     tokenizer = AutoTokenizer.from_pretrained(
-                        args.model_name_or_path, clean_up_tokenization_spaces=True)
+                        args.model_name_or_path, 
+                        trust_remote_code=args.trust_remote_code,
+                        clean_up_tokenization_spaces=True)
 
             except Exception as e:
                 log.error(
