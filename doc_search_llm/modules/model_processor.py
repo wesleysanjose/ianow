@@ -1,5 +1,5 @@
 from utils.simple_logger import Log
-from transformers import AutoTokenizer, AutoModelForCausalLM, LlamaTokenizer, LlamaForCausalLM, BitsAndBytesConfig
+from transformers import AutoModelForCausalLM, LlamaTokenizer, LlamaForCausalLM, BitsAndBytesConfig, AutoTokenizer, AutoModel
 import torch
 
 from langchain.embeddings import LlamaCppEmbeddings
@@ -22,10 +22,11 @@ class ModelProcessor:
     @staticmethod
     def load_gpt4all(args):
         log.debug(f'Loading model from {args}')
-        
+
         try:
             # Callbacks support token-wise streaming
-            callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+            callback_manager = CallbackManager(
+                [StreamingStdOutCallbackHandler()])
             # Verbose is required to pass to the callback manager
 
             # Make sure the model path is correct for your system!
@@ -42,10 +43,11 @@ class ModelProcessor:
     @staticmethod
     def load_llamacpp(args):
         log.debug(f'Loading model from {args}')
-        
+
         try:
             # Callbacks support token-wise streaming
-            callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+            callback_manager = CallbackManager(
+                [StreamingStdOutCallbackHandler()])
             # Verbose is required to pass to the callback manager
 
             # Make sure the model path is correct for your system!
@@ -66,7 +68,8 @@ class ModelProcessor:
         log.debug(f'Loading model from {args}')
         if args is None or not hasattr(args, 'model_name_or_path') or args.model_name_or_path is None:
             log.error(f'Invalid arguments or no model name path provided')
-            raise ValueError('Invalid arguments or no model name path provided')
+            raise ValueError(
+                'Invalid arguments or no model name path provided')
         else:
             # load the model from the path
             try:
@@ -79,7 +82,14 @@ class ModelProcessor:
                                                                  trust_remote_code=args.trust_remote_code)
                 else:
                     log.debug("Default model loading in fp16 or bf16")
-                    model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path,
+                    if args.chatglm:
+                        model = AutoModel.from_pretrained(
+                            args.model_name_or_path, 
+                            device_map="auto", 
+                            trust_remote_code=True, 
+                            torch_dtype=torch.bfloat16 if args.bf16 else torch.float16,)
+                    else:
+                        model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path,
                                                                  device_map="auto",
                                                                  torch_dtype=torch.bfloat16 if args.bf16 else torch.float16,
                                                                  trust_remote_code=args.trust_remote_code)

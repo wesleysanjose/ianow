@@ -54,6 +54,7 @@ def load_args():
     parser.add_argument('--port', type=int, default=7860, help='port number to listen on')
     parser.add_argument('--server_name', type=str, default='0.0.0.0', help='server name to listen on')
     parser.add_argument('--trust_remote_code', action='store_true', help='Trust remote code')
+    parser.add_argument('--chatglm', action='store_true', help='Use chatglm')
 
     args = parser.parse_args()
     log.info(f'args: {args}')
