@@ -12,6 +12,7 @@ from transformers import pipeline
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 from langchain.docstore.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from text2vec import SentenceModel
 
 
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
@@ -62,7 +63,7 @@ def load_args():
     return args
 
 
-def vectorstore_from_docs(vectorstore_processor, docs):
+def vectorstore_from_docs(vectorstore_processor, docs, embeddings=None):
     chunk_size = args.chunk_size
     chunk_overlap = args.chunk_overlap
     if chunk_size > 0:
@@ -72,7 +73,7 @@ def vectorstore_from_docs(vectorstore_processor, docs):
         log.info(
             f'Your original documents have been splitted into {len(splitted_docs)} documents')
     try:
-        vectorstore_processor.convert_from_docs(splitted_docs)
+        vectorstore_processor.convert_from_docs(splitted_docs, embeddings=embeddings)
     except Exception as e:
         log.error(f'Error converting documents to vectorstore: {e}')
         raise e
@@ -102,6 +103,9 @@ if __name__ == "__main__":
 
     vectorstore_processor = ChromaProcessor()
 
+    # embeddings for chatGLM
+    embeddings = SentenceModel('shibing624/text2vec-base-chinese')
+
     # show the file content in the text box
     # show the chatbot response in the text box
     with gr.Blocks() as demo:
@@ -121,7 +125,7 @@ if __name__ == "__main__":
 
                 log.debug(f'converted doc from upload file: {doc}')
                 docs = [doc]
-                vectorstore_from_docs(vectorstore_processor, docs)
+                vectorstore_from_docs(vectorstore_processor, docs, embeddings=embeddings)
                 return content
 
         gr.Interface(fn=process_file, inputs="file", outputs="text")
