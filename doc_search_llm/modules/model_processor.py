@@ -71,23 +71,25 @@ class ModelProcessor:
             # load the model from the path
             try:
                 if args.load_in_8bit:
-                    log.info("Model Loading in 8 bits")
+                    log.debug("Model Loading in 8 bits")
                     model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path,
                                                                  device_map="auto",
                                                                  quantization_config=BitsAndBytesConfig(
                                                                      load_in_8bit=True, llm_int8_enable_fp32_cpu_offload=True),
                                                                  trust_remote_code=args.trust_remote_code)
                 else:
-                    log.info("Default model loading in fp16 or bf16")
+                    log.debug("Default model loading in fp16 or bf16")
                     model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path,
                                                                  device_map="auto",
                                                                  torch_dtype=torch.bfloat16 if args.bf16 else torch.float16,
                                                                  trust_remote_code=args.trust_remote_code)
 
                 if type(model) is LlamaForCausalLM:
+                    log.debug(f'Loading LlamaTokenizer')
                     tokenizer = LlamaTokenizer.from_pretrained(
                         args.model_name_or_path, clean_up_tokenization_spaces=True)
                 else:
+                    log.debug(f'Loading AutoTokenizer')
                     tokenizer = AutoTokenizer.from_pretrained(
                         args.model_name_or_path, clean_up_tokenization_spaces=True)
 
