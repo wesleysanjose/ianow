@@ -87,7 +87,7 @@ class ModelProcessor:
                             args.model_name_or_path, 
                             device_map="auto", 
                             trust_remote_code=args.trust_remote_code,
-                            torch_dtype=torch.bfloat16 if args.bf16 else torch.float16,)
+                            torch_dtype=torch.bfloat16 if args.bf16 else torch.float16)
                     else:
                         model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path,
                                                                  device_map="auto",
