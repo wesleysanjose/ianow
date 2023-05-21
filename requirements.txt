@@ -12,7 +12,13 @@ fschat
 toml
 texttable
 protobuf<=3.20.3
-jira
-atlassian-python-api
 llama-cpp-python
 text2vec
+
+# for jira integration
+jira
+atlassian-python-api
+
+# for kubernetes integration
+kubernetes
+flatten_json

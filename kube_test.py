@@ -5,10 +5,12 @@ import os
 
 import yaml
 
+from flatten_json import flatten
+import json
+
 from utils.simple_logger import Log
 import sys
 from pathlib import Path
-
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 log = Log.get_logger(__name__)
 
@@ -69,12 +71,27 @@ def load_parser():
     log.debug(f'args: {args}')
     return args
 
+def dump_json(data):
+    try:
+        with open("output.json","w") as write_file:
+            json.dump(data, write_file)
+            write_file.close()
+        
+        flattened = [flatten(d) for d in data]
+        with open("output_flattened.json","w") as write_file:
+            json.dump(flattened, write_file)
+            write_file.close()
+    except Exception as e:
+        log.error(f'Error dumping json: {e}')
+        raise e
+
 def get_all_pods(v1):
     try:
         pod_list = v1.list_pod_for_all_namespaces(watch=False)
         for pod in pod_list.items:
             log.info(f"Namespace: {pod.metadata.namespace}, Pod: {pod.metadata.name}")
-
+        
+        dump_json(pod_list)
     except Exception as e:
         log.error(f'Error listing pods: {e}')
         raise e
