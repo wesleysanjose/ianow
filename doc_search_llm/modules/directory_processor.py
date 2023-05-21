@@ -33,7 +33,7 @@ class DirectoryProcessor:
         log.debug(f'chunk_overlap: {chunk_overlap}')
 
         try:
-            loader = DirectoryLoader(self.docs_root, self.kwargs)
+            loader = DirectoryLoader(path=self.docs_root, glob=self.kwargs, silent_errors=True)
             self.docs = loader.load()
             log.info(f'You have loaded {len(self.docs)} document(s)')
         except Exception as e:
