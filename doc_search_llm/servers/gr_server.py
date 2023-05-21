@@ -109,16 +109,7 @@ def vectorstore_from_docs(vectorstore_processor, docs, embeddings=None):
     except Exception as e:
         log.error(f'Error converting documents to vectorstore: {e}')
         raise e
-    
-template = """Given the following extracted parts of a long document and a question, create a final answer with references ("SOURCES"). 
-If you don't know the answer, just say that you don't know. Don't try to make up an answer.
-ALWAYS return a "SOURCES" part in your answer.
-Respond in Italian.
 
-QUESTION: {question}
-=========
-{summaries}
-========= """
 def query_to_llm(vectorstore_processor, chain, query):
     if vectorstore_processor.vectorstore is not None:
         docs = vectorstore_processor.vectorstore.similarity_search(query, args.top_n_docs_feed_llm)
