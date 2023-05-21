@@ -1,5 +1,7 @@
 import os
 import traceback
+
+from langchain import PromptTemplate
 from utils.simple_logger import Log
 import gradio as gr
 import argparse
@@ -22,6 +24,18 @@ log = Log.get_logger(__name__)
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
+template = """Given the following extracted parts of a long document and a question, create a final answer with references ("SOURCES"). 
+If you don't know the answer, just say that you don't know. Don't try to make up an answer.
+ALWAYS return a "SOURCES" part in your answer.
+Respond in Italian.
+
+QUESTION: {question}
+=========
+{summaries}
+=========
+FINAL ANSWER IN ITALIAN:"""
+PROMPT = PromptTemplate(template=template, input_variables=["summaries", "question"])
+
 def load_model(args):
 
     try:
@@ -33,7 +47,7 @@ def load_model(args):
                         tokenizer=tokenizer, max_new_tokens=1024)
         llm = HuggingFacePipeline(pipeline=pipe)
         # load the QA chain
-        chain = load_qa_chain(llm, chain_type="stuff")
+        chain = load_qa_chain(llm, chain_type="stuff", prompt=PROMPT)
     except Exception as e:
         log.error(f'Error loading model: {e}')
         raise e
@@ -95,8 +109,16 @@ def vectorstore_from_docs(vectorstore_processor, docs, embeddings=None):
     except Exception as e:
         log.error(f'Error converting documents to vectorstore: {e}')
         raise e
+    
+template = """Given the following extracted parts of a long document and a question, create a final answer with references ("SOURCES"). 
+If you don't know the answer, just say that you don't know. Don't try to make up an answer.
+ALWAYS return a "SOURCES" part in your answer.
+Respond in Italian.
 
-
+QUESTION: {question}
+=========
+{summaries}
+========= """
 def query_to_llm(vectorstore_processor, chain, query):
     if vectorstore_processor.vectorstore is not None:
         docs = vectorstore_processor.vectorstore.similarity_search(query, args.top_n_docs_feed_llm)
@@ -135,10 +157,10 @@ if __name__ == "__main__":
     args = load_args()
 
     # load normal QA chain
-    #chain = load_model(args)
+    chain = load_model(args)
 
     # load QA chain with source
-    chain = load_chain_qa_with_source(args)
+    # chain = load_chain_qa_with_source(args)
 
     vectorstore_processor = ChromaProcessor()
 
@@ -178,10 +200,10 @@ if __name__ == "__main__":
         def respond(message, chat_history):
 
             # answer using normal QA chain
-            # bot_message = query_to_llm(vectorstore_processor, chain, message)
+            bot_message = query_to_llm(vectorstore_processor, chain, message)
 
             # answer using QA chain with source
-            bot_message = query_to_llm_with_source(vectorstore_processor, chain, message)
+            #bot_message = query_to_llm_with_source(vectorstore_processor, chain, message)
 
             chat_history.append((message, bot_message))
             return "", chat_history
