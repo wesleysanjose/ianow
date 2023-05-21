@@ -69,20 +69,22 @@ def load_parser():
     log.debug(f'args: {args}')
     return args
 
+def get_all_pods(v1):
+    try:
+        pod_list = v1.list_pod_for_all_namespaces(watch=False)
+        for pod in pod_list.items:
+            log.info(f"Namespace: {pod.metadata.namespace}, Pod: {pod.metadata.name}")
+
+    except Exception as e:
+        log.error(f'Error listing pods: {e}')
+        raise e
+
 def main():
     args = load_parser()
 
     v1 = config_from_file(args=args)
 
-    print("Listing pods with their IPs:")
-    try: 
-        ret = v1.list_pod_for_all_namespaces(watch=False)
-        for i in ret.items:
-            print("%s\t%s\t%s" %
-                (i.status.pod_ip, i.metadata.namespace, i.metadata.name))
-    except Exception as e:
-        log.error(f'Error listing pods: {e}')
-        raise e
+    get_all_pods(v1=v1)
 
 if __name__ == '__main__':
     main()
