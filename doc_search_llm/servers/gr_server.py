@@ -49,7 +49,7 @@ def load_chain_qa_with_source(args):
                         tokenizer=tokenizer, max_new_tokens=1024)
         llm = HuggingFacePipeline(pipeline=pipe)
         # load the QA chain
-        chain = load_qa_with_source(llm, chain_type="stuff")
+        chain = load_qa_with_sources_chain(llm, chain_type="stuff")
     except Exception as e:
         log.error(f'Error loading model: {e}')
         raise e
