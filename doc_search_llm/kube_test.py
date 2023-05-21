@@ -14,10 +14,14 @@ def main():
 
     # Specify the Kubernetes master IP
     host = os.getenv("HOST")
+    log.debug(f'host: {host}')
     configuration.host = host
 
-    # Specify your token
+    
     token = os.getenv("TOKEN")
+    # Specify your token last 4 chars
+    log.debug(f'token ends with: {token[-4:]}')
+
     configuration.api_key = {"authorization": "Bearer " + token}
 
     configuration.verify_ssl = False
