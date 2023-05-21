@@ -28,9 +28,9 @@ def main():
 
     # Set the created configuration as default
     #client.Configuration.set_default(configuration)
-    client = client.ApiClient(configuration)
+    api_client = client.ApiClient(configuration)
 
-    v1 = client.CoreV1Api(client)
+    v1 = client.CoreV1Api(api_client)
 
     print("Listing pods with their IPs:")
     ret = v1.list_pod_for_all_namespaces(watch=False)
