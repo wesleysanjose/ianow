@@ -104,7 +104,10 @@ if __name__ == "__main__":
     vectorstore_processor = ChromaProcessor()
 
     # embeddings for chatGLM
-    embeddings = SentenceModel('shibing624/text2vec-base-chinese')
+    if args.chatglm:
+        embeddings = SentenceModel('shibing624/text2vec-base-chinese')
+    else:
+        embeddings = None
 
     # show the file content in the text box
     # show the chatbot response in the text box
