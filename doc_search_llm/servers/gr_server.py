@@ -46,7 +46,7 @@ def load_model(args):
                         tokenizer=tokenizer, max_new_tokens=1024)
         llm = HuggingFacePipeline(pipeline=pipe)
         # load the QA chain
-        chain = load_qa_chain(llm, chain_type="stuff", chain_type_kwargs="prompt":PROMPT)
+        chain = load_qa_chain(llm, chain_type="stuff", chain_type_kwargs={"prompt":PROMPT})
     except Exception as e:
         log.error(f'Error loading model: {e}')
         raise e
