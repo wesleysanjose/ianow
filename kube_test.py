@@ -26,8 +26,8 @@ def config_from_file(args):
             kube_config = yaml.safe_load(f)
             log.debug(f'kube_config: {kube_config}')
 
-        api_client = make_k8s_client(kube_config)
-        return api_client
+        v1 = make_k8s_client(kube_config)
+        return v1
     except Exception as e:
         log.error(f'Error loading kubeconfig: {e}')
         raise e
@@ -57,7 +57,8 @@ def config_from_env():
         # Set the created configuration as default
         #client.Configuration.set_default(configuration)
         api_client = client.ApiClient(configuration)
-        return api_client
+        v1 = client.CoreV1Api(api_client)
+        return v1
     except Exception as e:
         log.error(f'Error loading kubeconfig: {e}')
         raise e
@@ -73,8 +74,7 @@ def load_parser():
 def main():
     args = load_parser()
 
-    api_client = config_from_file(args=args)
-    v1 = client.CoreV1Api(api_client)
+    v1 = config_from_file(args=args)
 
     print("Listing pods with their IPs:")
     try: 
