@@ -24,7 +24,7 @@ def main():
 
     configuration.api_key = {"authorization": "Bearer " + token}
 
-    configuration.verify_ssl = False
+    # configuration.verify_ssl = False
 
     # Set the created configuration as default
     #client.Configuration.set_default(configuration)
@@ -37,7 +37,6 @@ def main():
     for i in ret.items:
         print("%s\t%s\t%s" %
               (i.status.pod_ip, i.metadata.namespace, i.metadata.name))
-        #print(i)
 
 if __name__ == '__main__':
     main()
