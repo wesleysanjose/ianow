@@ -106,7 +106,8 @@ def query_to_llm(vectorstore_processor, chain, query):
 
     if docs is not None:
         log.info(f'best matched docs count: {len(docs)}')
-        log.debug(f'Best matched docs: {docs[0]}')
+        for doc in docs:
+            log.debug(f'Best matched docs: {doc}')
 
         answer = chain.run(input_documents=docs, question=query)
         log.debug(f'answer: {answer}')
@@ -156,8 +157,7 @@ if __name__ == "__main__":
             with open(file.name, encoding="utf-8") as f:
                 try:
                     content = f.read()
-                    doc = Document(page_content=content, page_title=file.name,
-                                   page_url=file.name, page_id=file.name)
+                    doc = Document(page_content=content, metadata={'source':file.name})
                 except Exception as e:
                     log.error(f'Error reading file: {e}')
                     log.error(traceback.format_exc())
