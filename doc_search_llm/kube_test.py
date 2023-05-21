@@ -1,6 +1,13 @@
 from kubernetes import client, config
 import os
 
+from utils.simple_logger import Log
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent.absolute()))
+log = Log.get_logger(__name__)
+
 def main():
     # Create a configuration object from the config file
     configuration = client.Configuration()
@@ -11,8 +18,7 @@ def main():
 
     # Specify your token
     token = os.getenv("TOKEN")
-    configuration.api_key["authorization"] = f'Bearer {token}'
-    configuration.api_key_prefix['authorization'] = 'Bearer'
+    configuration.api_key = {"authorization": "Bearer " + token}
 
     configuration.verify_ssl = False
 

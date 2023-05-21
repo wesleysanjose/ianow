@@ -3,21 +3,21 @@ from doc_search_llm.modules.model_processor import ModelProcessor
 from doc_search_llm.modules.directory_processor import DirectoryProcessor
 from doc_search_llm.modules.chroma_processor import ChromaProcessor
 
-from utils.simple_logger import Log
 from langchain.chains.question_answering import load_qa_chain
 from transformers import pipeline
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 
 import argparse
 
+from utils.simple_logger import Log
 import sys
 from pathlib import Path
 
-import os
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 log = Log.get_logger(__name__)
+
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 def main(args):
     log.debug(f'args: {args}')
