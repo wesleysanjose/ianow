@@ -113,7 +113,7 @@ def query_to_llm(vectorstore_processor, chain, query):
         log.debug(f'answer: {answer}')
     return answer
 
-def query_with_source(vectorstore_processor, chain, query):
+def query_to_llm_with_source(vectorstore_processor, chain, query):
     if vectorstore_processor.vectorstore is not None:
         docs = vectorstore_processor.vectorstore.similarity_search(query, args.top_n_docs_feed_llm)
     else:
@@ -122,7 +122,8 @@ def query_with_source(vectorstore_processor, chain, query):
 
     if docs is not None:
         log.info(f'best matched docs count: {len(docs)}')
-        log.debug(f'Best matched docs: {docs[0]}')
+        for doc in docs:
+            log.debug(f'Best matched docs: {doc}')
 
         answer = chain({"input_documents": docs, "question": query}, return_only_outputs=True)
         log.debug(f'answer: {answer}')
@@ -180,7 +181,7 @@ if __name__ == "__main__":
             # bot_message = query_to_llm(vectorstore_processor, chain, message)
 
             # answer using QA chain with source
-            bot_message = query_with_source(vectorstore_processor, chain, message)
+            bot_message = query_to_llm_with_source(vectorstore_processor, chain, message)
 
             chat_history.append((message, bot_message))
             return "", chat_history
