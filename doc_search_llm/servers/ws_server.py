@@ -48,7 +48,8 @@ async def websocket_handler(request):
             docs = vectorstore_processor.vectorstore.similarity_search(query, args.top_n_docs_feed_llm)
             if docs is not None:
                 log.info(f'best matched docs count: {len(docs)}')
-                log.debug(f'Best matched docs: {docs[0]}')
+                for doc in docs:
+                    log.debug(f'Best matched docs: {doc}, similarity score: {doc.score}')
 
                 chain = request.app['chain']
                 answer = chain.run(input_documents=docs, question=query)
