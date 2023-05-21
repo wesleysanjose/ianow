@@ -24,6 +24,7 @@ def config_from_file(args):
     try:
         with open(kube_config) as f:
             kube_config = yaml.safe_load(f)
+            log.debug(f'kube_config: {kube_config}')
 
         api_client = make_k8s_client(kube_config)
         return api_client
