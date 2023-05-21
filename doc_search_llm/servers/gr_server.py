@@ -7,7 +7,8 @@ import sys
 from pathlib import Path
 from doc_search_llm.modules.chroma_processor import ChromaProcessor
 from doc_search_llm.modules.model_processor import ModelProcessor
-from langchain.chains.question_answering import load_qa_chain
+from langchain.chains.question_answering import load_qa_chain, load_qa_with_source
+from langchain.memory import ConversationBufferMemory
 from transformers import pipeline
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
 from langchain.docstore.document import Document
@@ -32,6 +33,22 @@ def load_model(args):
         llm = HuggingFacePipeline(pipeline=pipe)
         # load the QA chain
         chain = load_qa_chain(llm, chain_type="stuff")
+    except Exception as e:
+        log.error(f'Error loading model: {e}')
+        raise e
+    return chain
+
+def load_chain_qa_with_source(args):
+    try:
+        # load the LLM model
+        model, tokenizer = ModelProcessor.load_model(args)
+
+        # create the LLM pipeline
+        pipe = pipeline("text-generation", model=model,
+                        tokenizer=tokenizer, max_new_tokens=1024)
+        llm = HuggingFacePipeline(pipeline=pipe)
+        # load the QA chain
+        chain = load_qa_with_source(llm, chain_type="stuff")
     except Exception as e:
         log.error(f'Error loading model: {e}')
         raise e
@@ -94,12 +111,31 @@ def query_to_llm(vectorstore_processor, chain, query):
         log.debug(f'answer: {answer}')
     return answer
 
+def query_with_source(vectorstore_processor, chain, query):
+    if vectorstore_processor.vectorstore is not None:
+        docs = vectorstore_processor.vectorstore.similarity_search(query, args.top_n_docs_feed_llm)
+    else:
+        log.error(f'Vectorstore is not loaded')
+        raise Exception('Vectorstore is not loaded')
+
+    if docs is not None:
+        log.info(f'best matched docs count: {len(docs)}')
+        log.debug(f'Best matched docs: {docs[0]}')
+
+        answer = chain({"input_documents": docs, "question": query}, return_only_outputs=True)
+        log.debug(f'answer: {answer}')
+    return answer
+
 
 if __name__ == "__main__":
 
     args = load_args()
 
-    chain = load_model(args)
+    # load normal QA chain
+    #chain = load_model(args)
+
+    # load QA chain with source
+    chain = load_chain_qa_with_source(args)
 
     vectorstore_processor = ChromaProcessor()
 
@@ -138,7 +174,13 @@ if __name__ == "__main__":
         clear = gr.Button("Clear")
 
         def respond(message, chat_history):
-            bot_message = query_to_llm(vectorstore_processor, chain, message)
+
+            # answer using normal QA chain
+            # bot_message = query_to_llm(vectorstore_processor, chain, message)
+
+            # answer using QA chain with source
+            bot_message = query_with_source(vectorstore_processor, chain, message)
+            
             chat_history.append((message, bot_message))
             return "", chat_history
 
