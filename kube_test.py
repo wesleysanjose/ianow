@@ -89,13 +89,14 @@ def get_all_pods(v1):
     try:
         pod_list = v1.list_pod_for_all_namespaces(watch=False)
         for pod in pod_list.items:
-            log.info(f"Namespace: {pod.metadata.namespace}")
-            log.info(f"Name: {pod.metadata.name}")
-            log.info(f"Status: {pod.status.phase}")
-            log.info(f"IP: {pod.status.pod_ip}")
-            log.info(f"Node: {pod.spec.node_name}")
-            log.info(f"Host IP: {pod.status.host_ip}")
-            log.info(f"Labels: {pod.metadata.labels}")
+            print(f"In the Namespace {pod.metadata.namespace}, Pod {pod.metadata.name} is in the {pod.status.phase} phase. It has the IP {pod.status.pod_ip} and is running on the Node {pod.spec.node_name}. The host IP is {pod.status.host_ip}.")
+            # log.info(f"Namespace: {pod.metadata.namespace}")
+            # log.info(f"Name: {pod.metadata.name}")
+            # log.info(f"Status: {pod.status.phase}")
+            # log.info(f"IP: {pod.status.pod_ip}")
+            # log.info(f"Node: {pod.spec.node_name}")
+            # log.info(f"Host IP: {pod.status.host_ip}")
+            # log.info(f"Labels: {pod.metadata.labels}")
         # dump_json(pod_list.items)
     except Exception as e:
         log.error(f'Error listing pods: {e}')
