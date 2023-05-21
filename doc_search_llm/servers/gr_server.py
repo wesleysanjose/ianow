@@ -24,19 +24,19 @@ log = Log.get_logger(__name__)
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-template = """Given the following extracted parts of a long document and a question, create a final answer with references ("SOURCES"). 
-If you don't know the answer, just say that you don't know. Don't try to make up an answer.
-ALWAYS return a "SOURCES" part in your answer.
-
-QUESTION: {question}
-=========
-{summaries}
-=========
-FINAL ANSWER:"""
-PROMPT = PromptTemplate(template=template, input_variables=["summaries", "question"])
 
 def load_model(args):
+    template = """Given the following extracted parts of a long document and a question, create a final answer with references ("SOURCES"). 
+    If you don't know the answer, just say that you don't know. Don't try to make up an answer.
+    ALWAYS return a "SOURCES" part in your answer.
 
+    QUESTION: {question}
+    =========
+    {summaries}
+    =========
+    FINAL ANSWER:"""
+    PROMPT = PromptTemplate(template=template, input_variables=[
+                            "summaries", "question"])
     try:
         # load the LLM model
         model, tokenizer = ModelProcessor.load_model(args)
@@ -46,12 +46,12 @@ def load_model(args):
                         tokenizer=tokenizer, max_new_tokens=1024)
         llm = HuggingFacePipeline(pipeline=pipe)
         # load the QA chain
-        kwargs={"prompt":PROMPT}
-        chain = load_qa_chain(llm, chain_type="stuff", **kwargs)
+        chain = load_qa_chain(llm, chain_type="stuff", prompt=PROMPT)
     except Exception as e:
         log.error(f'Error loading model: {e}')
         raise e
     return chain
+
 
 def load_chain_qa_with_source(args):
     try:
@@ -84,9 +84,12 @@ def load_args():
     parser.add_argument('--bf16', action='store_true', help='Use bf16')
     parser.add_argument('--top_n_docs_feed_llm', type=int,
                         default=4,  help='to avoid LLM too many documents, we only feed top N best matched documents to LLM')
-    parser.add_argument('--port', type=int, default=7860, help='port number to listen on')
-    parser.add_argument('--server_name', type=str, default='0.0.0.0', help='server name to listen on')
-    parser.add_argument('--trust_remote_code', action='store_true', help='Trust remote code')
+    parser.add_argument('--port', type=int, default=7860,
+                        help='port number to listen on')
+    parser.add_argument('--server_name', type=str,
+                        default='0.0.0.0', help='server name to listen on')
+    parser.add_argument('--trust_remote_code',
+                        action='store_true', help='Trust remote code')
     parser.add_argument('--chatglm', action='store_true', help='Use chatglm')
 
     args = parser.parse_args()
@@ -105,14 +108,17 @@ def vectorstore_from_docs(vectorstore_processor, docs, embeddings=None):
         log.info(
             f'Your original documents have been splitted into {len(splitted_docs)} documents')
     try:
-        vectorstore_processor.convert_from_docs(splitted_docs, embeddings=embeddings)
+        vectorstore_processor.convert_from_docs(
+            splitted_docs, embeddings=embeddings)
     except Exception as e:
         log.error(f'Error converting documents to vectorstore: {e}')
         raise e
 
+
 def query_to_llm(vectorstore_processor, chain, query):
     if vectorstore_processor.vectorstore is not None:
-        docs = vectorstore_processor.vectorstore.similarity_search(query, args.top_n_docs_feed_llm)
+        docs = vectorstore_processor.vectorstore.similarity_search(
+            query, args.top_n_docs_feed_llm)
     else:
         log.error(f'Vectorstore is not loaded')
         raise Exception('Vectorstore is not loaded')
@@ -126,9 +132,11 @@ def query_to_llm(vectorstore_processor, chain, query):
         log.debug(f'answer: {answer}')
     return answer
 
+
 def query_to_llm_with_source(vectorstore_processor, chain, query):
     if vectorstore_processor.vectorstore is not None:
-        docs = vectorstore_processor.vectorstore.similarity_search(query, args.top_n_docs_feed_llm)
+        docs = vectorstore_processor.vectorstore.similarity_search(
+            query, args.top_n_docs_feed_llm)
     else:
         log.error(f'Vectorstore is not loaded')
         raise Exception('Vectorstore is not loaded')
@@ -138,7 +146,8 @@ def query_to_llm_with_source(vectorstore_processor, chain, query):
         for doc in docs:
             log.debug(f'Best matched docs: {doc}')
 
-        answer = chain({"input_documents": docs, "question": query}, return_only_outputs=True)
+        answer = chain(
+            {"input_documents": docs, "question": query}, return_only_outputs=True)
         log.debug(f'answer: {answer}')
     return answer
 
@@ -171,7 +180,8 @@ if __name__ == "__main__":
             with open(file.name, encoding="utf-8") as f:
                 try:
                     content = f.read()
-                    doc = Document(page_content=content, metadata={'source':file.name})
+                    doc = Document(page_content=content,
+                                   metadata={'source': file.name})
                 except Exception as e:
                     log.error(f'Error reading file: {e}')
                     log.error(traceback.format_exc())
@@ -179,7 +189,8 @@ if __name__ == "__main__":
 
                 log.debug(f'converted doc from upload file: {doc}')
                 docs = [doc]
-                vectorstore_from_docs(vectorstore_processor, docs, embeddings=embeddings)
+                vectorstore_from_docs(
+                    vectorstore_processor, docs, embeddings=embeddings)
                 return content
 
         gr.Interface(fn=process_file, inputs="file", outputs="text")
@@ -194,7 +205,7 @@ if __name__ == "__main__":
             bot_message = query_to_llm(vectorstore_processor, chain, message)
 
             # answer using QA chain with source
-            #bot_message = query_to_llm_with_source(vectorstore_processor, chain, message)
+            # bot_message = query_to_llm_with_source(vectorstore_processor, chain, message)
 
             chat_history.append((message, bot_message))
             return "", chat_history
