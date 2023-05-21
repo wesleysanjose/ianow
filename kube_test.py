@@ -74,8 +74,7 @@ def load_parser():
 def dump_json(data):
     try:
         with open("output.json","w") as write_file:
-            for d in data:
-                json.dump(d, write_file)
+            json.dump([d for d in data], write_file)
             write_file.close()
         
         flattened = [flatten(d) for d in data]
@@ -92,7 +91,7 @@ def get_all_pods(v1):
         for pod in pod_list.items:
             log.info(f"Namespace: {pod.metadata.namespace}, Pod: {pod.metadata.name}")
         
-        dump_json(pod_list)
+        dump_json(pod_list.items)
     except Exception as e:
         log.error(f'Error listing pods: {e}')
         raise e
