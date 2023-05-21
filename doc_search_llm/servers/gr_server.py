@@ -7,7 +7,8 @@ import sys
 from pathlib import Path
 from doc_search_llm.modules.chroma_processor import ChromaProcessor
 from doc_search_llm.modules.model_processor import ModelProcessor
-from langchain.chains.question_answering import load_qa_chain, load_qa_with_source
+from langchain.chains.question_answering import load_qa_chain
+from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.memory import ConversationBufferMemory
 from transformers import pipeline
 from langchain.llms.huggingface_pipeline import HuggingFacePipeline
@@ -180,7 +181,7 @@ if __name__ == "__main__":
 
             # answer using QA chain with source
             bot_message = query_with_source(vectorstore_processor, chain, message)
-            
+
             chat_history.append((message, bot_message))
             return "", chat_history
 
