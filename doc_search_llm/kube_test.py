@@ -2,7 +2,7 @@ from kubernetes import client, config
 import os
 
 def main():
-    # Create a configuration object
+    # Create a configuration object from the config file
     configuration = client.Configuration()
 
     # Specify the Kubernetes master IP
