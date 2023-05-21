@@ -24,7 +24,6 @@ def config_from_file(args):
     try:
         with open(kube_config) as f:
             kube_config = yaml.safe_load(f)
-            log.debug(f'kube_config: {kube_config}')
 
         v1 = make_k8s_client(kube_config)
         return v1
@@ -55,7 +54,6 @@ def config_from_env():
         # configuration.verify_ssl = False
 
         # Set the created configuration as default
-        #client.Configuration.set_default(configuration)
         api_client = client.ApiClient(configuration)
         v1 = client.CoreV1Api(api_client)
         return v1
